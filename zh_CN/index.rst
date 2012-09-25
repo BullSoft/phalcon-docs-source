@@ -8,7 +8,7 @@ Welcome to Phalcon framework, a new approach on PHP frameworks. Our mission is t
 什么是Phalcon？
 ----------------
 
-Phalcon是一个开源的、为PHP5打造的全功能框架，专为性能而优化并以C扩展的方式提供。你无需学习或使用C语言，因为它的功能都以PHP类的方式准备好了。Phalcon是松耦合，你也可以根据需要在你的代码中使用其中的某些组件。
+Phalcon是一个开源的、为PHP5打造的全功能框架，专为性能而优化并以C扩展的方式提供。你无需学习或使用C语言，因为它的功能都以PHP类的方式准备好了。Phalcon是松耦合的，你完全可以根据需要在你的代码中使用其中的某些组件。
 
 Phalcon is an open source, full stack framework for PHP 5 written as a C-extension, optimized for high performance. You don't need learn or use the C language, since the functionality is exposed as PHP classes ready for you to use. Phalcon also is loosely coupled, allowing you to use its objects as glue components based on the needs of your application.
 
