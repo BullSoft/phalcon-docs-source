@@ -1,5 +1,7 @@
-Our motivation
+我们的目标
 ==============
+
+如今有很多PHP框架，但没有一个像Phalcon一样（真的，请相信我们）。
 
 There are many PHP frameworks nowadays, but none of them is like Phalcon (Really, trust us on this one).
 
