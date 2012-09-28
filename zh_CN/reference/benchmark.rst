@@ -3,7 +3,7 @@
 
 之前性能并不是 WEB 开发首要关注的问题，因为合理的硬件能弥补代码性能。但是
 自从 Google 决定_把站点打开速度加入搜索排序算法中后，性能和功能一样成为
- WEB 开发需要关注的重点。也就是说，通过提升网站性能也能够给网站带来正面影响。
+WEB 开发需要关注的重点。也就是说，通过提升网站性能也能够给网站带来正面影响。
 
 In the past, performance was not considered one of the top priorities when developing web applications. Reasonable hardware was able to compensate for that. However when Google decided_ to take site speed into account in the search rankings, performance became one of the top priorities alongside functionality. This is yet another way in which improving web performance will have a positive impact on a website.
 
