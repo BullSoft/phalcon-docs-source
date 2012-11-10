@@ -70,11 +70,9 @@ Note that you don't need any "library" directory related to Phalcon. The framewo
 
 漂亮的URL
 ^^^^^^^^^^^^^^
-在本教程中我们将使用漂亮（友好）的URL。友好的URL不仅利于搜索引擎优化（SEO），也方便用户记住。Phalcon支持几乎所有主流 WEB 服务器的重写模块。不过，漂亮的URL对于你的应用来说不是必须的，没有它们也能照样开发。
+在本教程中我们将使用漂亮（友好）的URL。
 
 We'll use pretty (friendly) urls for this tutorial. Friendly URLs are better for SEO as well as they are easy for users to remember. Phalcon supports rewrite modules provided by the most popular web servers. Making your application's URLs friendly is not a requirement and you can just as easy develop without them.
-
-在这个示例中我们将使用Apache的重写模块。让我们在 /.htaccess 文件中创建一对重写规则吧：
 
 In this example we'll use the rewrite module for Apache. Let's create a couple of rewrite rules in the /.htaccess file:
 
@@ -87,11 +85,7 @@ In this example we'll use the rewrite module for Apache. Let's create a couple o
         RewriteRule  (.*) public/$1 [L]
     </IfModule>
 
-所有对该项目的请求都会重定向到 public/ 目录下，这使得 public 目录成为实际的网站根目录。这一步是为了确保内部的项目文件对外不可见，以避开安全威胁。
-    
 All requests to the project will be rewritten to the public/ directory making it the document root. This step ensures that the internal project folders remain hidden from public viewing and thus posing security threats.
-
-重定向的第二步将会检查被请求的文件是否存在，如果文件存在则不会被WEB服务器重定向。
 
 The second set of rules will check if the requested file exists, and if it does it doesn't have to be rewitten by the web server module:
 
@@ -105,13 +99,9 @@ The second set of rules will check if the requested file exists, and if it does 
         RewriteRule ^(.*)$ index.php?_url=/$1 [QSA,L]
     </IfModule>
 
-引导程序
+Bootstrap
 ^^^^^^^^^
-你需要创建的第一个文件是引导文件。该文件非常重要，是整个应用的基础，让你能控制应用的方方面面。在引导文件中你可以实现组件初以及应用行为的初始化。
-
 The first file you need to create is the bootstrap file. This file is very important; since it serves as the base of your application, giving you control of all aspects of it. In this file you can implement initialization of components as well as application behavior.
-
-引导文件 public/index.php 文件看起来应该是这样的：
 
 The public/index.php file should look like:
 
@@ -147,13 +137,9 @@ The public/index.php file should look like:
          echo "PhalconException: ", $e->getMessage();
     }
 
-自动加载
+Autoloaders
 ^^^^^^^^^^^
-在引导文件的第一部分，我们注册了一个类-自动加载器。它将会用于加载应用程序的控制器类和模型类。例如，为了提升应用的灵活性，我们可能会注册一个或多个控制器目录。在我们的示例中，我们已经使用了 Phalcon\\Loader 组件。
-
 The first part that we find in the boostrap is registering an autoloader. This will be used to load classes as controllers and models in the application. For example we may register one or more directories of controllers increasing the flexibility of the application. In our example we have used the component Phalcon\\Loader.
-
-有了它，我们便可使用不同的策略加载类。不过就目前示例来说，我们选择根据预定义目录这种方式来定位类文件。
 
 With it, we can load classes using various strategies but for this example we have chosen to locate classes based on predefined directories:
 
@@ -169,13 +155,9 @@ With it, we can load classes using various strategies but for this example we ha
         )
     )->register();
 
-依赖管理
+Dependency Management
 ^^^^^^^^^^^^^^^^^^^^^
-使用Phalcon必须要理的一个重要的概念就是 :doc:`依赖注入容器 <di>` 。这个...听起来可能很复杂，但实际上简单又实用。
-
 A very important concept that must be understood when working with Phalcon is its :doc:`dependency injection container <di>`. It may sound complex but is actually very simple and practical.
-
-服务容器就好比一个大箱子，里面存放了应用程序后续要使用的各种服务（全局资源）。每当框架需要某个组件时，都会使用预先约定好的服务名称向容器请求。鉴于Phalcon是一个解耦框架， Phalcon\\DI 扮演着胶水的角色，以促进不同组件透明地协同工作。
 
 A service container is a bag where we globally store the services that our application will use to work. Each time the framework requires a component, will ask the container using a name service agreed. Since Phalcon is a highly decoupled framework, Phalcon\\DI acts as glue facilitating the integration of the different components achieving their work together in a transparent manner.
 
@@ -186,15 +168,9 @@ A service container is a bag where we globally store the services that our appli
     //Create a DI
     $di = new Phalcon\DI\FactoryDefault();
 
-:doc:`Phalcon\\DI\\FactoryDefault <../api/Phalcon\_DI_FactoryDefault>` 是 Phalcom\\DI 的一个变种。为了让事情变得更简单，它注册了Phalcon框架的大部分组件，所以我们就不必再一个个去注册它们了。即使之后想更换这个工厂服务也不会有任何问题。
-    
 :doc:`Phalcon\\DI\\FactoryDefault <../api/Phalcon\_DI_FactoryDefault>` is a variant of Phalcon\\DI. To make things easier, it has registered most of the components that come with Phalcon. Thus we should not register them one by one. Later there will be no problem in replacing a factory service.
 
-接下来，我们注册 “视图” 服务，并显示指定框架将在哪个目录下查找视图文件。因为视图不是以类的形式存在，所以我们也无法使用类-自动加载器处理。
-
 In the next part, we register the "view" service indicating the directory where the framework will find the views files. As the views do not correspond to classes, they can not be charged with an autoloader.
-
-注册服务的方法不只一种，但是在本教程中我们将使用匿名函数的方法：
 
 Services can be registered in several ways, but for our tutorial we'll use lambda functions:
 
@@ -209,8 +185,6 @@ Services can be registered in several ways, but for our tutorial we'll use lambd
         return $view;
     });
 
-在引导文件的最后一部分，我们发现了 :doc:`Phalcon\\Mvc\\Application <../api/Phalcon_Mvc_Application>` 组件。它的职责是初始化请求环境、路由来访请求，然后调度请求到任何可发现的动作上。当处理完毕后，它收集所有响应并返回给浏览器。
-
 In the last part of this file, we find :doc:`Phalcon\\Mvc\\Application <../api/Phalcon_Mvc_Application>`. Its purpose is to initialize the request environment, route the incoming request, and then dispatch any discovered actions; it aggregates any responses and returns them when the process is complete.
 
 .. code-block:: php
@@ -221,14 +195,10 @@ In the last part of this file, we find :doc:`Phalcon\\Mvc\\Application <../api/P
     $application->setDI($di);
     echo $application->handle()->getContent();
 
-正如你所看到的，引导文件不仅简短，而且不用引入额外的文件。我们用不超过30行代码为自己制定了一个灵活的MVC应用。
-    
 As you can see, the bootstrap file is very short and we do not need to include any additional files. We have set ourselves a flexible MVC application in less than 30 lines of code.
 
-创建控制器
+Creating a Controller
 ^^^^^^^^^^^^^^^^^^^^^
-默认Phalcon会查找名为"Index"的控制器。当请求中没有控制器和动作传入时，它是整个应用的起点。Index 控制器 (app/controllers/IndexController.php) 示例代码如下：
-
 By default Phalcon will look for a controller named "Index". It is the starting point when no controller or action has been passed in the request. The index controller (app/controllers/IndexController.php) looks like:
 
 .. code-block:: php
@@ -245,20 +215,15 @@ By default Phalcon will look for a controller named "Index". It is the starting 
 
     }
 
-控制器类名必须要以"Controller"结尾，控制器动作必须要以"Action"结尾。如果你从浏览器访问该应用，你应该看到这样的情景：
-
 The controller classes must have the suffix "Controller" and controller actions must have the suffix "Action". If you access the application from your browser, you should see something like this:
 
 .. figure:: ../_static/img/tutorial-1.png
     :align: center
 
-恭喜您，你已经和Phaclon一起在蓝天飞翔了！
-
 Congratulations, you're flying with Phalcon!
 
-向视图发送输出
+Sending output to a view
 ^^^^^^^^^^^^^^^^^^^^^^^^
-
 Sending output on the screen from the controller is at times necessary but not desirable as most purists in the MVC community will attest. Everything must be passed to the view which is responsible for outputting data on screen. Phalcon will look for a view with the same name as the last executed action inside a directory named as the last executed controller. In our case (app/views/index/index.phtml):
 
 .. code-block:: php

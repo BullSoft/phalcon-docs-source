@@ -92,7 +92,8 @@ Phalcon 是如何工作的？
 总结
 ----------
 
-Phalcon 尝试开发出最快的 PHP 框架。所以，你现在有一个更简单、健壮的方式开发应用程序了，而且完全不用考虑性能问题。 享受编程的快乐吧！
+Phalcon 尝试开发出最快的 PHP 框架。所以，你现在有一个更简单、健壮的方式开
+发应用程序了，完全不用考虑性能问题。 享受编程的快乐吧！
 
 Phalcon is an effort to build the fastest framework for PHP. You now have an even easier and robust way to develop applications without be worrying about performance. Enjoy! 
 
