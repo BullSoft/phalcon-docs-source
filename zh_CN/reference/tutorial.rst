@@ -1,7 +1,7 @@
 教程一：从实例开始学习
 ==================================
 
-在本教程中，我们将通过一个简单的注册表单案例来引导您使用Phalcon创建应用。我们稍后也会阐述框架的基本行为。如果你对Phalcon的自动代码生成工具感兴趣，你可以查看`开发工具`_ 。
+在本教程中，我们将通过一个简单的注册表单案例来引导您使用Phalcon创建应用。我们稍后也会阐述框架的基本行为。如果你对Phalcon的自动代码生成工具感兴趣，你可以查看 `开发工具`_ 。
 
 Throughout this first tutorial, we'll walk you through the creation of an application with a simple registration form from the ground up. We will also explain the basic aspects of the framework's behavior. If you are interested in automatic code generation tools for Phalcon, you can check our `developer tools`_.
 
@@ -258,6 +258,7 @@ Congratulations, you're flying with Phalcon!
 
 向视图发送输出
 ^^^^^^^^^^^^^^^^^^^^^^^^
+虽然有时我们不得不从控制器发送输出到屏幕，但这种方式是不可取的，纯粹的MVC实践者将会证明这一点。视图才是负责发送输出到屏幕的组件，因此所有信息都必须传送给它。Phalcon将会在以 最后执行的控制器命名的 文件夹中查找 以最后执行的动作命名的 视图文件。在本示例中是（app/views/index/index.phtml）：
 
 Sending output on the screen from the controller is at times necessary but not desirable as most purists in the MVC community will attest. Everything must be passed to the view which is responsible for outputting data on screen. Phalcon will look for a view with the same name as the last executed action inside a directory named as the last executed controller. In our case (app/views/index/index.phtml):
 
@@ -265,6 +266,8 @@ Sending output on the screen from the controller is at times necessary but not d
 
     <?php echo "<h1>Hello!</h1>";
 
+现在我们在控制器（app/controllers/IndexController.php）中定义一个空动作：
+    
 Our controller (app/controllers/IndexController.php) now has an empty action definition:
 
 .. code-block:: php
@@ -281,10 +284,14 @@ Our controller (app/controllers/IndexController.php) now has an empty action def
 
     }
 
+浏览器输出应该和之前一样。当动作执行结束时，静态组件 :doc:`Phalcon\\Mvc\\View <../api/Phalcon_Mvc_View>` 会被自动创建。要了解更多关于视图的内容， :doc:`猛击这里 <views>`
+    
 The browser output should remain the same. The :doc:`Phalcon\\Mvc\\View <../api/Phalcon_Mvc_View>` static component is automatically created when the action execution has ended. Learn more about :doc:`views usage here <views>` .
 
-Designing a sign up form
+设计注册表单
 ^^^^^^^^^^^^^^^^^^^^^^^^
+现在，让我们来修改index.phtml视图文件，在文件中添加到新控制器"signup"的链接。目的就是允许用户在我们的应用中注册。
+
 Now we will change the index.phtml view file, to add a link to a new controller named "signup". The goal is to allow users to sign up in our application.
 
 .. code-block:: php
@@ -295,16 +302,22 @@ Now we will change the index.phtml view file, to add a link to a new controller 
 
     echo Phalcon\Tag::linkTo("signup", "Sign Up Here!");
 
+生成的HTML代码将显示一个链接到新控制器的"A"标签：
+    
 The generated HTML code displays an "A" html tag linking to a new controller:
 
 .. code-block:: html
 
     <h1>Hello!</h1> <a href="/test/signup">Sign Up Here!</a>
 
+为了生成这个"A"标签，我们使用 :doc:`\Phalcon\\Tag <../api/Phalcon_Tag>` 类。这是一个工具类，让我们能够以框架约定的形式创建HTML标签。要了解更多关于生成HTML的内容， :doc:`猛击这里 <tags>` 。
+    
 To generate the tag we use the class :doc:`\Phalcon\\Tag <../api/Phalcon_Tag>`. This is a utility class that allows us to build HTML tags with framework conventions in mind. A more detailed article regarding HTML generation can be :doc:`found here <tags>`
 
 .. figure:: ../_static/img/tutorial-2.png
 	:align: center
+
+下面是Signup控制器（app/controllers/SignupController.php）：
 
 Here is the controller Signup (app/controllers/SignupController.php):
 
@@ -322,6 +335,8 @@ Here is the controller Signup (app/controllers/SignupController.php):
 
     }
 
+空的index动作不会传递任何信息到定义表单的视图中：    
+    
 The empty index action gives the clean pass to a view with the form definition:
 
 .. code-block:: html+php
@@ -348,18 +363,29 @@ The empty index action gives the clean pass to a view with the form definition:
 
     </form>
 
+
+在浏览器中查看该表单，应该是这个样子：
+    
 Viewing the form in your browser will show something like this:
 
 .. figure:: ../_static/img/tutorial-3.png
 	:align: center
 
+:doc:`Phalcon\\Tag <../api/Phalcon_Tag>` 组件还提供了一些有效构建表单元素的方法。
+    
 :doc:`Phalcon\\Tag <../api/Phalcon_Tag>` also provides useful methods to build form elements.
 
+Phalcon\\Tag::form 方法目前只接受一个参数：应用中某 控制器/动作 的相对URI。
+
 The Phalcon\\Tag::form method receives only one parameter for instance, a relative uri to a controller/action in the application.
+
+通过点击"Send"按钮，你将会看到框架抛出的异常，提示我们在"signup"控制器中缺少"register"动作。这个异常是 public/index.php 文件抛出的：
 
 By clicking the "Send" button, you will notice an exception thrown from the framework, indicating that we are missing the "register" action in the controller "signup". This exception is thrown by our public/index.php file:
 
     PhalconException: Action "register" was not found on controller "signup"
+
+只要实现了这个方法，异常就会消失：
 
 Implementing that method will remove the exception:
 
@@ -382,11 +408,17 @@ Implementing that method will remove the exception:
 
     }
 
+当再次点击"Send"按钮的时候，你将会看到一个空白页面。用户输入的姓名和邮箱应该被储存在数据库中。按照MVC的纲领，为了写出纯粹干净的面向对象，数据库交互应该在模型中完成。
+    
 If you click the "Send" button again, you will see a blank page. The name and email input provided by the user should be stored in a database. According to MVC guidelines, database interactions must be done through models so as to ensure clean object oriented code.
 
-Creating a Model
+创建模型
 ^^^^^^^^^^^^^^^^
+Phalcon给PHP带来了第一个C语言级的ORM。这并没有增加开发复杂度，反而大大简化了这个过程。
+
 Phalcon brings the first ORM for PHP entirely written in C-language. Instead of increasing the complexity of development, it simplifies it.
+
+在创建第一个模型之前，我们需要一个数据库-表和它关联。下面我们定义一个简单的表来存储用户信息：
 
 Before creating our first model, we need a database table to map it to. A simple table to store registered users can be defined like this:
 
@@ -399,6 +431,8 @@ Before creating our first model, we need a database table to map it to. A simple
       PRIMARY KEY (`id`)
     );
 
+模型文件应该放在 app/models 目录下。关联"users"表的模型类：
+ 
 A model should be located in the app/models directory. The model mapping to "users" table:
 
 .. code-block:: php
@@ -410,10 +444,11 @@ A model should be located in the app/models directory. The model mapping to "use
 
     }
 
-Setting a Database Connection
+设置数据库连接
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-In order to be able to use a database connection and subsequently access data through our models, we need to specify it in our bootstrap process. A database connection is just another service that our application has that can be use
-for sereral components:
+为了使用数据库连接，以及后面通过模型访问数据，我们需要在引导程序中指定它。数据库连接不过是我们应用的另一个服务罢了，设置好后也能被其他组件使用：
+
+In order to be able to use a database connection and subsequently access data through our models, we need to specify it in our bootstrap process. A database connection is just another service that our application has that can be used for sereral components:
 
 .. code-block:: php
 
@@ -457,10 +492,14 @@ for sereral components:
          echo "PhalconException: ", $e->getMessage();
     }
 
+如果设置了正确的数据库参数，我们的应用便能和模型一起工作了。
+    
 With the correct database parameters, our models are ready to work and interact with the rest of the application.
 
-Storing data using models
+使用模型存储数据
 ^^^^^^^^^^^^^^^^^^^^^^^^^
+接收来自表单的数据，然后下一步把它们存储到数据库-表中。
+
 Receiving data from the form and storing them in the table is the next step.
 
 .. code-block:: php
@@ -499,28 +538,41 @@ Receiving data from the form and storing them in the table is the next step.
 
     }
 
+我们永远不能信任用户输入。对于用户输入的变量，我们必须有相应的过滤器适用于它们，对其内容进行 :doc:`过滤/审查 <filter>` 。这样能让我们的应用更安全，因为它能避免一些常见的攻击，如SQL注入等。
+    
 We can never trust data sent from a user. Variables passed into our application, from user input, need to have a filter applied to them so as to :doc:`validate/sanizite <filter>` their contents. This makes the application more secure because it avoids common attacks like SQL injections.
+
+在本教程中，我们对“姓名”这个变量使用“字符串”过滤器，以保证用户的输入中不会有任何危险字符。 :doc:`Phalcon\\Filter <../api/Phalcon_Filter>` 组件使得这一切变得简单易用，因为它是通过依赖容器注入到 getPost 方法中。
 
 In our tutorial we apply the filter "string" to the "name" variable to ensure that user did not sent us any malicious characters. The component :doc:`Phalcon\\Filter <../api/Phalcon_Filter>` makes this task trivial, since it is injected from the dependency container into the getPost call.
 
+然后我们实例化Users类，它会关联到某条用户记录。类的公有属性会关联到users表中某条记录的所有字段。创建一条新记录，并为其字段设置相应的值，然后调用save()方法，便会在数据库中存储该记录。save()方法会给我们返回一个布尔值，以表明数据存储过程成功与否。
+
 We then instantiate the Users class, which corresponds to a User record. The class public properties map to the fields of the record in the users table. Setting the relevant values in the new record and calling save() will store the data in the database for that record. The save() method returns a boolean value which informs us on whether the storing of the data was successful or not.
 
-Additional validation happens automatically on fields that are not null (required). If we don't type any of the required files our screen will look like this:
+对于非空（必填）字段，会对其自动进行非空过滤。如果有必填字段没填，我们便会得到如下提示：
+
+Additional validation happens automatically on fields that are not null (required). If we don't type any of the required fields our screen will look like this:
 
 .. figure:: ../_static/img/tutorial-4.png
 	:align: center
 
-Conclusion
+总结
 ----------
-This is a very simple tutorial and as you can see, it's easy to start building an application using Phalcon. The fact that Phalcon is an extension on your web server has not interfered with the ease of development or features available. We invite you to continue reading the manual so that you can discover additional features offered by Phalcon!
+这是一个非常简单的教程，如你所见，使用Phalcon创建应用是如此的简单。Phalcon作为一个扩展存在，并不会增加开发复杂度，更不会影响现有功能。我们邀请您继续阅读手册的其他部分，这样你便能发现Phalcon提供的其他功能！
 
-Sample Applications
+This is a very simple tutorial and as you can see, it's easy to start building an application using Phalcon. The fact that Phalcon is an extension on your web server has not interfered with the ease of development or features available. We invite you to continue reading the manual so that you can discover additional features1 offered by Phalcon!
+
+示例应用程序
 -------------------
+下面提供了一些基于Phaclon的应用，它们是你学习时更完善的示例：
+
 The following Phalcon powered applications are also available, providing more complete examples:
 
 * `INVO application`_: Invoice generation application. Allows for management of products, companies, product types. etc.
 * `PHP Alternative website`_: Multilingual and advanced routing application.
 
+.. _开发工具: tools
 .. _developer tools: tools
 .. _INVO application: http://blog.phalconphp.com/post/20928554661/invo-a-sample-application
 .. _PHP Alternative website: http://blog.phalconphp.com/post/24622423072/sample-application-php-alternative-site
