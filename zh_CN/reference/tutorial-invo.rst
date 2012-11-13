@@ -1,12 +1,18 @@
-Tutorial 2: Explaining INVO
+教程二：发票应用程序
 ===========================
+
+在教程二中，我们将会介绍一个更完整的应用程序，以更深入地了解Phalcon开发。发票应用程序（以下简称INVO）是我们创建的示例程序之一，它是一个小型网站，允许用户在线申请发票，以及管理客户和产品。你可以在这里检出代码 Github_ 。
 
 In this second tutorial, we'll explain a more complete application in order to deepen the development with Phalcon. INVO is one of the applications we have created as samples. INVO is a small website that allows their users to generate invoices, and do other tasks as manage their customers and products. You can clone its code from Github_.
 
+INVO 使用 `Twitter Bootstrap <http://twitter.github.com/>`_ 作为客户端框架。尽管此应用不会真的产生发票，但作为一个示例程序也能帮助我们了解框架是如何工作的。
+
 Also, INVO was made with `Twitter Bootstrap <http://twitter.github.com/>`_ as client-side framework. Although the application does not generate invoices still it serves as an example to understand how the framework works.
 
-Project Structure
+项目结构
 ------------------
+当你检出项目代码后，你可以看到如下文件结构：
+
 Once you clone the project in your document root you'll see the following structure:
 
 .. code-block:: bash
@@ -25,14 +31,19 @@ Once you clone the project in your document root you'll see the following struct
             public/js/
         schemas/
 
-As you know, Phalcon does not impose a particular file structure for application development. This project provides a simple MVC
-structure and a public document root.
+正如你所知，Phalcon对应用开发没有特殊的文件结构要求。本项目提供一个简单的MVC结构和一个公共文档根目录。
+        
+As you know, Phalcon does not impose a particular file structure for application development. This project provides a simple MVC structure and a public document root.
+
+如果你在浏览器中打开 http://localhost/invo ，你将会看到这样的画面：
 
 Once you open the application in your browser http://localhost/invo you'll something like this:
 
 .. figure:: ../_static/img/invo-1.png
    :align: center
 
+本应用程序分为两部分：第一部分是前端，这是一个公共部分，访问者可以接受INVO的信息并索要联系信息；第二部分是后端，这是一个管理部分，注册用户可以管理产品和客户信息。
+   
 The application is divided in two parts a frontend, that is a public part where visitors can receive information about INVO and request contact information. The second part is the backend, is an administrative area where a registered user can manage his products and customers.
 
 Routing

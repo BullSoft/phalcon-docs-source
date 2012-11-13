@@ -16,7 +16,7 @@
           {%- if not loop.first %}{{ reldelim2 }}{% endif %}</li>
         {%- endfor %}
         {%- block rootrellink %}
-        <li><a href="http://phalcon.betayun.com">首页</a> &raquo;</li>
+        <li><a href="http://phalconphp.org/index">首页</a> &raquo;</li>
         <li><a href="{{ pathto(master_doc) }}">{{ shorttitle|e }}</a>{{ reldelim1 }}</li>
         {%- endblock %}
         {%- for parent in parents %}
@@ -66,7 +66,7 @@
                 </select>
             {% endif %}
             <div id="searchbox" style="">
-              <h3>Search</h3>
+              <h3>搜索</h3>
                 <form class="search" action="http://readthedocs.org/search/project/" method="get">
                   <input type="text" name="q" size="18">
                   <input type="submit" value="Go">
@@ -109,10 +109,10 @@
       {%- endif %}{% endif %}
 {%- endmacro %}
 
-<html lang="en">
+<html lang="zh-CN">
   <head>
     {% if sourcename == "error.txt" %}
-    <base href="http://phalconphp.com/">
+    <base href="http://phalconphp.org/">
     {% endif %}
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     {{ metatags }}
@@ -182,18 +182,18 @@
   </head>
   <body>
     <div id="wrapper">
-
       <div id="header">
-        <h1><a href="http://phalconphp.com/index" ><img border="0" src="{{ pathto('_static/img/logo-small.png', 1) }}"></a></h1>
+        <h1><a href="http://phalconphp.org/index" ><img border="0" src="{{ pathto('_static/img/logo-small.png', 1) }}"></a></h1>
         <div align="center">
           <div id="nav-main" role="navigation">
             <div class="menubar">
-              <div class="nav-main-features nav-first"><a href="http://phalconphp.com/index" >HOME</a></div>
-              <div class="nav-main-features nav-first"><a href="http://phalconphp.com/download" >DOWNLOAD</a></div>
-              <div class="nav-main-features"><a href="http://docs.phalconphp.com" >DOCUMENTATION</a></div>
-              <div class="nav-main-features"><a href="http://phalconphp.com/support" >SUPPORT</a></div>
+              <div class="nav-main-features nav-first"><a href="http://phalconphp.org/index">首页</a></div>
+              <div class="nav-main-features nav-first"><a href="http://phalconphp.org/download">下载</a></div>
+              <div class="nav-main-features"><a href="http://docs.phalconphp.org">文档</a></div>
+              <div class="nav-main-features"><a href="http://phalconphp.org:8000/trac">TRAC</a></div>
+              <div class="nav-main-features"><a href="http://phalconphp.org/support">支持</a></div>
               <div class="nav-main-features nav-first"><a href="https://github.com/phalcon/cphalcon">GITHUB</a></div>
-              <div class="nav-main-features"><a target="blog" href="http://blog.phalconphp.com/">BLOG</a></div>
+              <div class="nav-main-features"><a target="blog" href="http://blog.phalconphp.com/">博客</a></div>
             </div>
           </div>
         </div>
