@@ -1,5 +1,6 @@
-教程二：发票应用程序
-===========================
+======================
+ 教程二：发票应用程序
+======================
 
 在教程二中，我们将会介绍一个更完整的应用程序，以更深入地了解Phalcon开发。发票应用程序（以下简称INVO）是我们创建的示例程序之一，它是一个小型网站，允许用户在线申请发票，以及管理客户和产品。你可以在这里检出代码 Github_ 。
 
@@ -10,7 +11,7 @@ INVO 使用 `Twitter Bootstrap <http://twitter.github.com/>`_ 作为客户端框
 Also, INVO was made with `Twitter Bootstrap <http://twitter.github.com/>`_ as client-side framework. Although the application does not generate invoices still it serves as an example to understand how the framework works.
 
 项目结构
-------------------
+========
 当你检出项目代码后，你可以看到如下文件结构：
 
 Once you clone the project in your document root you'll see the following structure:
@@ -47,7 +48,7 @@ Once you open the application in your browser http://localhost/invo you'll somet
 The application is divided in two parts a frontend, that is a public part where visitors can receive information about INVO and request contact information. The second part is the backend, is an administrative area where a registered user can manage his products and customers.
 
 路由规则
--------
+========
 INVO使用Phalcon内置的标准路由方式。这些路由使用的规则是：/:controller/:action/:params。也就是说URL的第一部分是控制器，第二部分是动作，第三部分是参数列表。
 
 INVO uses the standard route that is builtin with the Router component. This routes matches the following pattern: /:controller/:action/:params. This means that the first part of the url is the controller, the second the action and so on.
@@ -57,7 +58,7 @@ INVO uses the standard route that is builtin with the Router component. This rou
 The following route /session/register will execute the controller SessionController and its action registerAction.
 
 系统配置
--------------
+========
 INVO有一个配置文件，用于设置应用程序的通用参数。引导程序（public/index.php）的前几行就读取了配置文件。
 
 INVO has a configuration file which sets general parameters of the application. This file is read in the first lines
@@ -102,7 +103,7 @@ Phalcon没有定义任何的默认配置。配置节能有效地帮助我们组�
 Phalcon has no defined any convention settings. Sections help us organize the options as appropriate. In this file there are three sections to use later.
 
 自动加载器
------------
+==========
 引导程序（public/index.php）的第二部分是类-自动加载器。自动加载器注册了一系列目录，应用程序最终会在这些目录中查找类。
 
 A second part that appears in the boostrap file (public/index.php) is the autoloader. The autoloader registers a set of directories where the application will look for the classes that it eventually will need.
@@ -127,7 +128,7 @@ A second part that appears in the boostrap file (public/index.php) is the autolo
 Note that what has been done is to register the directories that were in the configuration file. The only directory that is not registered is the viewsDir, because it contains no classes but html + php files.
 
 处理请求
---------------------
+========
 让我们来看看引导程序的最后一部分，用户请求最终被Phalcon\\Mvc\\Application处理，这个类会初始化和执行应用程序运行所需的各种环境。
 
 Let's go much further, at the end of the file, the request is finally handled by Phalcon\\Mvc\\Application, this class initializes and executes all the necesary to make the application run:
@@ -141,7 +142,7 @@ Let's go much further, at the end of the file, the request is finally handled by
     echo $application->handle()->getContent();
 
 依赖注入
---------------------
+========
 注意看上面这段代码的第二行，$application 变量接受另一个变量 $di 作为参数。那么，变量 $di 扮演着怎样的角色呢？Phalcon是一个高解耦的框架，所以我们需要一个组件把所有东西“粘”在一起，并让它们一起工作。这个组件就是Phalcon\\DI。它既是一个服务容器，也是一个依赖注入容器，实例化应用程序需要的所有组件。
 
 Look at the second line of the code block above, the variable $application is receiving another variable $di. What is the purpose of that variable? Phalcon is a highly decoupled framework, so we need a component that act as glue to make everything work together. That component is Phalcon\\DI. It is a service container that also performs dependency injection, instantiating all components as they are needed by the application.
@@ -186,7 +187,7 @@ A request can use many services, register each service one to one can be a cumbe
 It registers the majority of services with components provided by the framework as standard. If we need to override the definition of some it could be done as above with "session". Now we know the origin of the variable $di.
 
 登录应用
-------------------------
+========
 登录后我们便可使用后端控制器了。我们是使用逻辑来区分前端控制器和后端控制器的，所有控制器都位于同一目录下。要进入系统，我们必须要有合法的用户名和密码。用户信息存储在"invo"数据库的"users"表中。
 
 Log in will allow us to work on backend controllers. The separation between the controllers of the backend and frontend is only logical. All controllers are located in the same directory. To enter the system, we must have a valid username and password. The users are stored in the table "users" of the database "invo".
@@ -213,6 +214,8 @@ Before we can log in, we need to configure the connection to the database in the
     
 Here we return an instance of the MySQL connection adapter. If needed, you could do extra actions such as adding a logger, a profiler or change the adapter, or setup it as you want.
 
+下面这张简单的表单（app/views/session/index.phtml）会向服务器请求登陆信息。出于简洁性考虑，此处我们省略了一些HTML代码。
+
 Back then, the following simple form (app/views/session/index.phtml) requests the logon information. We've removed some HTML code to make the example more concise:
 
 .. code-block:: html+php
@@ -229,6 +232,8 @@ Back then, the following simple form (app/views/session/index.phtml) requests th
 
     </form>
 
+SessionController::startAction（app/controllers/SessionController.pthml）负责验证用户输入的信息是否在数据库中存在。
+    
 The SessionController::startAction (app/controllers/SessionController.phtml) have the task of validate the entered data checking for a valid user in the database:
 
 .. code-block:: php
@@ -286,12 +291,19 @@ The SessionController::startAction (app/controllers/SessionController.phtml) hav
 
     }
 
+注意，在控制器中我们使用了很多公共属性，如：$this->flash, $this->request和$this->session。
+这些是之前在依赖注入容器里面定义的服务。当你第一次访问它们时，它们会被注入到控制器中，成为控制器的属性。
+    
 Note that multiple public attributes are accessed in the controller like: $this->flash, $this->request or $this->session.
 These are services defined in dependency injector from earlier. When accessed the first time, they are injected as part of the controller.
 
+这些服务是共享使用的，无论你在什么地方调用它们，你访问的都是同一个实例。
+
 These services are shared, which means that we will always be accessing the same instance regardless of the place where we invoke them.
 
-For instance, here we invoke the "session" service and them we store the user identity in the "auth" variable:
+例如，我们调用"session"服务，然后把用户ID存储到"auth"变量中：
+
+For instance, here we invoke the "session" service and then we store the user identity in the "auth" variable:
 
 .. code-block:: php
 
@@ -302,16 +314,24 @@ For instance, here we invoke the "session" service and them we store the user id
         'name' => $user->name
     ));
 
-Securing the Backend
---------------------
+后院不能起火
+============
+后端是私人领域，只有注册用户才能访问。因此有必要验证只有登陆用户才有访问这些控制器的权限。如果你没登陆应用，还想访问产品控制器（私有），你将会碰到如下场景：
+
 The backend is a private area where only registered users have access. Therefore it is necessary to check that only registered users have access to these controllers. If you aren't logged in the application and you try to access by example the products controller (that is private) you'll see a screen like this:
 
 .. figure:: ../_static/img/invo-2.png
    :align: center
 
+每次当有人尝试访问控制器和动作时，应用都会验证该用户所属角色确有权限访问，否则就会显示上面图中的消息并跳转至首页。
+   
 Every time someone try to access any controller and action, the application verifies that the current role has access to it, otherwise it displays a message like the above and forwards the flow to the home page.
 
+现在，让我们来挖掘一下应用是如何完成权限功能的。首先要要知道的是，有一种组件叫调度器。当路由器组件分析出路由信息后便会通知调度器，然后由调度器负责加载相应的控制器，并执行相应的动作方法。
+
 Now let's find out how the application accomplishes this. The first thing to know is that there is a component called Dispatcher. It is informed about the route found by the component Router. Based on this is responsible for loading the appropriate controller and execute the corresponding action method.
+
+一般来说，调度器是框架自动创建的。在本教程中，在执行请求的动作之前，我们要检验用户是否有权限访问该动作。为了达到这个目的，我们定义了一个匿名函数来替换框架的默认调度器：
 
 Normally, the Dispatcher is created automatically by the framework. In our case, we want to make a special action that is check before executing the required action if the user has access to it or not. To achieve this we replace the component by creating a function defined by us in the bootstrap:
 
@@ -324,10 +344,12 @@ Normally, the Dispatcher is created automatically by the framework. In our case,
         return $dispatcher;
     });
 
+我们现在可以完全控制此应用的调度器了。框架的许多组件都通过事件允许我们修改它们的内部操作流程。由于依赖注入组件扮演着“胶水”的角色，一个名为事件管理的组件可以帮助我们把某些组件产生的消息传递给其他对象。
+    
 We now have total control of the Dispatcher used by the application. Now, many components of the framework launch events that allow us to modify the internal flow of operation. As the dependency Injector component acts as glue for components, a new component called EventsManager helps us to bring the events produced by some component to the objects that require them.
 
-Events Management
-^^^^^^^^^^^^^^^^^
+事件管理
+-----------------
 A EventsManager allows us to attach listeners to a particular type of event. The type that interests us now is "dispatch" that filters all events produced by the Dispatcher:
 
 .. code-block:: php
@@ -426,7 +448,7 @@ Now, we're verifying the role in the current session, check to see if he has acc
     }
 
 Providing an ACL list
-^^^^^^^^^^^^^^^^^^^^^
+---------------------
 In the previous example we obtain the ACL using the method $this->_getAcl(). This method is also implemented in the Plugin.
 Now explain step by step how we built the access control list:
 
@@ -502,7 +524,7 @@ The ACL now have knowledge of the existing controllers and their related actions
 Hooray!, the ACL is now complete.
 
 User Components
----------------
+===============
 All the UI elements and visual style of the application has been achieved mostly through Twitter Boostrap. Some elements, such as the navigation bar change according to the state of the application. For example, in the upper right corner, the link "Log in / Sign Up" changes to "Log out" if a user is logged into the application.
 
 This part of the application is implemented in the component "Elements" (app/library/Elements.php).
@@ -570,7 +592,7 @@ The important part is:
     <?php echo $this->elements->getMenu() ?>
 
 Working with the CRUD
----------------------
+=====================
 Most options that manipulate data (companies, products and types of products), were developed using a basic and common CRUD_ (Create, Read, Update and Delete). Each CRUD contains the following files:
 
 .. code-block:: bash
@@ -657,7 +679,7 @@ Each controller have the following actions:
     }
 
 The Search Form
-^^^^^^^^^^^^^^^
+---------------
 Every CRUD starts with a search form. This form shows each field that has the table (products), allowing the user to create a search criteria from any field.
 The "products" table has a relationship to the table "products_types". In this case we previously query the records in this table in order to facilitate the search by that field:
 
@@ -690,7 +712,7 @@ Note that the $productTypes contains the data neccesary to fill the SELECT tag w
 execute the action "search" in the controller who will perform the search based on the data entered by the user.
 
 Performing a Search
-^^^^^^^^^^^^^^^^^^^
+-------------------
 The action "search" has a dual behavior. When accessed via POST, it performs a search based on the data sent from the form.
 But when accessed via GET it moves the current page in the paginator. To differentiate one from the other HTTP method,
 we check it using the :doc:`Request <request>` component:
@@ -796,7 +818,7 @@ In the view (app/views/products/search.phtml), we traverse the results correspon
     <?php } ?>
 
 Creating and Updating Records
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------
 Now let's see how the CRUD creates and updates records. From the "new" and "edit" views the data entered by the user
 are sent to the actions "create" and "save" that perform actions of "create" and "update" products respectively.
 
@@ -905,7 +927,7 @@ sent it back to the database through to the "save" action:
     }
 
 Changing the Title Dynamically
-------------------------------
+==============================
 When you browse between one option and another will see that the title changes dynamically indicating where we are currently working.
 This is achieved in each controller initializer:
 
@@ -959,7 +981,7 @@ Finally, the title is printed in the main view (app/views/index.phtml):
     </html>
 
 Conclusion
-----------
+==========
 This tutorial covers many more aspects of building applications with Phalcon, hope you have served to learn more and get more out of the framework.
 
 .. _Github: https://github.com/phalcon/invo
