@@ -350,6 +350,8 @@ We now have total control of the Dispatcher used by the application. Now, many c
 
 事件管理
 -----------------
+一个事件管理器可以让我们监听一个特定类型的事件。现在我们感兴趣的是“调度”类型，它能筛选出所有由调度器产生的事件：
+
 A EventsManager allows us to attach listeners to a particular type of event. The type that interests us now is "dispatch" that filters all events produced by the Dispatcher:
 
 .. code-block:: php
@@ -375,6 +377,8 @@ A EventsManager allows us to attach listeners to a particular type of event. The
         return $dispatcher;
     });
 
+安全插件是一个位于（app/plugins/Security.php）的类文件。这个类实现了"beforeExecuteRoute"方法，这恰好是调度器产生的某个事件的名称：
+    
 The Security plugin is a class located at (app/plugins/Security.php). This class implements the method "beforeExecuteRoute". This is the same
 name as one of the events produced in the Dispatcher:
 
@@ -394,10 +398,14 @@ name as one of the events produced in the Dispatcher:
 
     }
 
+钩子事件的方法总是接收两个参数：第一个参数包含事件产生的上下文信息；第二个参数是产生事件的对象。插件不应该继承自 Phalcon\Mvc\User\Plugin 类，但是这样能让我们更容易的访问到应用中的其他服务。
+    
 The hooks events always receive a first paramter that contains contextual information of the event produced and a second that is the
 object that produced the event itself. Plugins should not extend the class Phalcon\Mvc\User\Plugin, but by doing it they gain easier access to the services of the application.
 
-Now, we're verifying the role in the current session, check to see if he has access using the ACL list. If he does not have access we redirect hom to the home screen as explained:
+现在我们在当前会话中验证用户角色，使用ACL检验他是否有访问权限。如果没有权限，我们将按约定把他带到首页：
+
+Now, we're verifying the role in the current session, check to see if he has access using the ACL list. If he does not have access we redirect him to the home screen as explained:
 
 .. code-block:: php
 
@@ -447,8 +455,10 @@ Now, we're verifying the role in the current session, check to see if he has acc
 
     }
 
-Providing an ACL list
+制定访问控制列表
 ---------------------
+在前面的示例中，我们使用 $this->_getAcl() 方法获取访问控制列表。这个方法在插件中也实现了。现在我们一步一步介绍如何制定访问控制列表：
+
 In the previous example we obtain the ACL using the method $this->_getAcl(). This method is also implemented in the Plugin.
 Now explain step by step how we built the access control list:
 
@@ -472,6 +482,8 @@ Now explain step by step how we built the access control list:
         $acl->addRole($role);
     }
 
+现在我们为每个部分定义各自的资源。控制器名称是资源名，它们的动作属于资源的访问入口。
+    
 Now we define the respective resources of each area. Controller names are resources and their actions are the accesses in
 the resources:
 
@@ -501,6 +513,8 @@ the resources:
         $acl->addResource(new Phalcon\Acl\Resource($resource), $actions);
     }
 
+现在ACL知道了应用中所有的控制器和它们的动作。"Users"角色既能访问前端资源又能访问后端资源，而"Guests"角色只能访问公共资源：
+    
 The ACL now have knowledge of the existing controllers and their related actions. The role "Users" have access to all the resources of both the frontend and the backend. The role "Guests" only have access to the public area:
 
 .. code-block:: php
@@ -521,11 +535,17 @@ The ACL now have knowledge of the existing controllers and their related actions
         }
     }
 
+万岁！访问控制列表现在完成了。
+    
 Hooray!, the ACL is now complete.
 
-User Components
+用户组件
 ===============
+应用中的所有UI元素和样式风格大部分使用Twitter Boostrap完成。有些元素，如导航条随着应用状态的不同而改变。例如：当用户登陆后，右上角区域的“登陆/注册”链接会变成“注销”链接。
+
 All the UI elements and visual style of the application has been achieved mostly through Twitter Boostrap. Some elements, such as the navigation bar change according to the state of the application. For example, in the upper right corner, the link "Log in / Sign Up" changes to "Log out" if a user is logged into the application.
+
+应用的这部分是在"Element"组件（app/library/Elements.php）中实现的。
 
 This part of the application is implemented in the component "Elements" (app/library/Elements.php).
 
@@ -548,6 +568,8 @@ This part of the application is implemented in the component "Elements" (app/lib
 
     }
 
+该类继承自 Phalcon\Mvc\User\Component，然而此处继承不是强制的，但是这样做会让我们更容易地访问应用中的其他服务。现在，我们在依赖注入容器中注册这个类：
+    
 This class extends the Phalcon\Mvc\User\Component, it is not imposed to extend a component with this class, but if it helps to more quickly access the application services. Now, we register this class in the Dependency Injector Container:
 
 .. code-block:: php
@@ -559,6 +581,8 @@ This class extends the Phalcon\Mvc\User\Component, it is not imposed to extend a
         return new Elements();
     });
 
+和控制器、插件或组件一样，在视图中你可以使用服务名作为属性访问在容器中注册过的服务：
+    
 As controllers, plugins or components within a view also can access the services registered in the container just accessing an attribute by name:
 
 .. code-block:: html+php
@@ -585,14 +609,18 @@ As controllers, plugins or components within a view also can access the services
         </footer>
     </div>
 
+上面这段代码中，我们重点关注的是:
+    
 The important part is:
 
 .. code-block:: html+php
 
     <?php echo $this->elements->getMenu() ?>
 
-Working with the CRUD
+使用CRUD
 =====================
+大部分数据操作（公司信息、产品以及产品类型），基于基础、通用的 CRUD_ （创建、读取、更新和删除）开发。完整的CRUD包含以下文件：
+
 Most options that manipulate data (companies, products and types of products), were developed using a basic and common CRUD_ (Create, Read, Update and Delete). Each CRUD contains the following files:
 
 .. code-block:: bash
@@ -610,6 +638,8 @@ Most options that manipulate data (companies, products and types of products), w
                     new.phtml
                     search.phtml
 
+每个控制器都包含以下动作：                    
+                    
 Each controller have the following actions:
 
 .. code-block:: php
@@ -678,7 +708,7 @@ Each controller have the following actions:
 
     }
 
-The Search Form
+搜索表单
 ---------------
 Every CRUD starts with a search form. This form shows each field that has the table (products), allowing the user to create a search criteria from any field.
 The "products" table has a relationship to the table "products_types". In this case we previously query the records in this table in order to facilitate the search by that field:
