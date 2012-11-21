@@ -1,6 +1,13 @@
-Tutorial 3: Creating a Simple REST API
+教程三：创建简单的REST API
 ======================================
+在本教程中，我们将会讲解如何使用HTTP方法创建一个简单的 RESTful_ API 应用：
+
 In this tutorial, we will explain how to create a simple application that provides a RESTful_ API using the different HTTP methods:
+
+* GET - 获取、查询数据
+* POST - 添加数据
+* PUT - 更新数据
+* DELETE - 删除数据
 
 * GET to retrieve and search data
 * POST to add data

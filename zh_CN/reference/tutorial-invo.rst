@@ -568,9 +568,9 @@ This part of the application is implemented in the component "Elements" (app/lib
 
     }
 
-该类继承自 Phalcon\Mvc\User\Component，然而此处继承不是强制的，但是这样做会让我们更容易地访问应用中的其他服务。现在，我们在依赖注入容器中注册这个类：
+该类继承自 Phalcon\\Mvc\\User\\Component，然而此处继承不是强制的，但是这样做会让我们更容易地访问应用中的其他服务。现在，我们在依赖注入容器中注册这个类：
     
-This class extends the Phalcon\Mvc\User\Component, it is not imposed to extend a component with this class, but if it helps to more quickly access the application services. Now, we register this class in the Dependency Injector Container:
+This class extends the Phalcon\\Mvc\\User\\Component, it is not imposed to extend a component with this class, but if it helps to more quickly access the application services. Now, we register this class in the Dependency Injector Container:
 
 .. code-block:: php
 
@@ -619,7 +619,7 @@ The important part is:
 
 使用CRUD
 =====================
-大部分数据操作（公司信息、产品以及产品类型），基于基础、通用的 CRUD_ （创建、读取、更新和删除）开发。完整的CRUD包含以下文件：
+大部分数据操作（公司信息、产品以及产品类型），都基于基本的以及通用的 CRUD_ （创建、读取、更新和删除）开发。完整的CRUD包含以下文件：
 
 Most options that manipulate data (companies, products and types of products), were developed using a basic and common CRUD_ (Create, Read, Update and Delete). Each CRUD contains the following files:
 
@@ -710,6 +710,9 @@ Each controller have the following actions:
 
 搜索表单
 ---------------
+CRUD 基本都以一个搜索表单开始。此表单显示了数据库表（products）的每个字段，允许用户从任何字段创建搜索条件。
+"products"表与"products_types"表有关联关系。在这种情况下，我们预搜索"products_types"表，以便之后我们指定商品类型继续检索：
+
 Every CRUD starts with a search form. This form shows each field that has the table (products), allowing the user to create a search criteria from any field.
 The "products" table has a relationship to the table "products_types". In this case we previously query the records in this table in order to facilitate the search by that field:
 
@@ -726,6 +729,8 @@ The "products" table has a relationship to the table "products_types". In this c
         $this->view->setVar("productTypes", ProductTypes::find());
     }
 
+先查询所有的“商品类型”，存到本地变量"productTypes"中，并传递给视图。然后我们在视图（app/view/index.phtml）中放置一个"select"标签，并用刚查询到的“商品类型”作为选择框的内容。
+    
 All the "product types" are queried and passed to the view as a local variable "productTypes". Then in the view (app/views/index.phtml) we show a "select" tag
 filled with those results:
 
@@ -738,11 +743,15 @@ filled with those results:
         <?php echo Tag::select(array("product_types_id", $productTypes, "using" => array("id", "name"), "useDummy" => true)) ?>
     </div>
 
+注意，这里我们使用 Phalcon\\Tag::select 生成 SELECT 标签，使用 $productTypes 作为 SELECT 标签的数据。当表单提交时，会触发控制器的"search"动作，该动作将根据用户输入的信息执行查询操作。
+    
 Note that the $productTypes contains the data neccesary to fill the SELECT tag with Phalcon\\Tag::select. Once the form is submitted, it will
 execute the action "search" in the controller who will perform the search based on the data entered by the user.
 
-Performing a Search
+执行查询操作
 -------------------
+"search"动作有两个行为。当使用 POST 方式访问时，它将会根据表单数据执行查询操作。但当使用 GET 方式访问时，它便会显示一个带分页的商品列表。为了区分不同的HTTP方法，我们使用 :doc:`Request <request>` 组件：
+
 The action "search" has a dual behavior. When accessed via POST, it performs a search based on the data sent from the form.
 But when accessed via GET it moves the current page in the paginator. To differentiate one from the other HTTP method,
 we check it using the :doc:`Request <request>` component:
@@ -768,6 +777,8 @@ we check it using the :doc:`Request <request>` component:
 
     }
 
+在 :doc:`Phalcon\\Mvc\\Model\\Criteria <../api/Phalcon_Mvc_Model_Criteria>` 的帮助下，我们能够智能地从表单数据构建查询条件：
+    
 With the help of :doc:`Phalcon\\Mvc\\Model\\Criteria <../api/Phalcon_Mvc_Model_Criteria>`, we can create the search conditions
 intelligently based on the data types and values sent from the form:
 
@@ -777,12 +788,20 @@ intelligently based on the data types and values sent from the form:
 
     $query = Criteria::fromInput($this->di, "Products", $_POST);
 
+此方法会筛选出非空字段，并利用它们构建查询：
+如果某字段的数据类型为文本或类似文件（char, varchar, text等），它将会使用"like"查询筛选结果。
+如果字段的数据类型不是文本，它将会使用"="查询。
+    
 This method verifies which values are different from "" (empty string) and null and takes them into account to create the query:
 If the data type of a field is text or similar (char, varchar, text, etc.) it will use a "like" operator to filter the results.
 If the data type is not text or similar, it'll use the operator "=".
 
+另外，"Criteria"将会忽略数据表中不存在的$_POST字段。同样，数据会使用“绑定参数”被自动转义。
+
 Additionally, "Criteria" ignores all the $_POST variables that do not match any field in the table. Also, values ​​are automatically escaped
 using "bound parameters".
+
+现在，我们把产生的参数存在控制器的会话容器中：
 
 Now, we store the produced params in the controller's session bag:
 
@@ -792,8 +811,12 @@ Now, we store the produced params in the controller's session bag:
 
     $this->persistent->searchParams = $query->getParams();
 
+什么是会话容器？它是一个控制器属性，并且是跨请求存在的。当我们访问控制器时，这个属性被注入成一个 :doc:`Phalcon\\Session\\Bag <../api/Phalcon_Session_Bag>` 服务，每个控制器都有自己的会话容器，互相独立，互不影响。
+    
 A session bag, is a special attribute of a controller that persists between requests. When accesed, this attribute injects
 a :doc:`Phalcon\\Session\\Bag <../api/Phalcon_Session_Bag>` service, that's independent in each controller.
+
+然后，基于刚才构建的参数，我们可以执行查询了：
 
 Then, based on the built params we perform the query:
 
@@ -807,6 +830,8 @@ Then, based on the built params we perform the query:
         return $this->forward("products/index");
     }
 
+如果没有找到任何商品，我们将引导用户回到index页面。假设返回的结果不为空，我们创建一个分页器来显示结果：
+    
 If the search doesn't return any product, we forward the user to the index action again. Let's pretend the
 search returned results, then we create a paginator to navigate easily through them:
 
@@ -823,6 +848,8 @@ search returned results, then we create a paginator to navigate easily through t
     //Get active page in the paginator
     $page = $paginator->getPaginate();
 
+最后，我们把分页器传递给视图：
+    
 Finally we pass the returned page to view:
 
 .. code-block:: php
@@ -831,6 +858,8 @@ Finally we pass the returned page to view:
 
     $this->view->setVar("page", $page);
 
+在视图（app/views/products/search.phtml）中，我们遍历当前分页器中所有结果：
+    
 In the view (app/views/products/search.phtml), we traverse the results corresponding to the current page:
 
 .. code-block:: html+php
@@ -847,10 +876,14 @@ In the view (app/views/products/search.phtml), we traverse the results correspon
         </tr>
     <?php } ?>
 
-Creating and Updating Records
+创建、更新记录
 -----------------------------
+现在，让我们看看 CRUD 是如何创建和更新记录的。用户在"new"和"edit"视图中填写的数据将会被发送给"create"和"save"动作，它们将会分别执行“新建”和“更新”操作。
+
 Now let's see how the CRUD creates and updates records. From the "new" and "edit" views the data entered by the user
 are sent to the actions "create" and "save" that perform actions of "create" and "update" products respectively.
+
+在创建商品的例子中，我们提取表单发送来的数据，并且把它们赋值给"products"对象实例：
 
 In the creation case, we recover the data sent and assign them to a new "products" instance:
 
@@ -875,6 +908,8 @@ In the creation case, we recover the data sent and assign them to a new "product
 
     }
 
+数据在赋值给对象前都会被过滤一次。保存的时候，便会知道数据是否符合业务规则和 Products 模型验证规则：
+    
 Data is filtered before being assigned to the object. When saving we'll know whether the data conforms to the business rules
 and validations implemented in the model Products:
 
@@ -905,6 +940,8 @@ and validations implemented in the model Products:
 
     }
 
+在产品更新的例子中，我们必须要先给用户展现他将要编辑的记录：
+    
 Now in the case of product updating, first we must present to the user the data currently in the edited record:
 
 .. code-block:: php
@@ -929,6 +966,8 @@ Now in the case of product updating, first we must present to the user the data 
 
     }
 
+Tag::displayTo 辅助方法给表单中相应字段设置默认值。然后用户可以随意修改这些值，然后提交表单到"save"动作，并更新数据库：
+    
 The Tag::displayTo helper sets a default value in the form on the attribute with the same name. Thanks to this, the user can change any value and then
 sent it back to the database through to the "save" action:
 
@@ -956,8 +995,11 @@ sent it back to the database through to the "save" action:
 
     }
 
-Changing the Title Dynamically
+动态更改标题
 ==============================
+当你在页面上不同的选项之间浏览时，你会发现网站的标题是动态变化的，这样你就很清楚地知道你正在哪个位置。
+这是在每个控制器初始化的时候完成的：
+
 When you browse between one option and another will see that the title changes dynamically indicating where we are currently working.
 This is achieved in each controller initializer:
 
@@ -979,6 +1021,8 @@ This is achieved in each controller initializer:
 
     }
 
+注意，这里我们调用了 parent::initialize()，这个方法会给页面标题添加更多信息：
+    
 Note, that the method parent::initialize() is also called, it adds more data to the title:
 
 .. code-block:: php
@@ -997,6 +1041,8 @@ Note, that the method parent::initialize() is also called, it adds more data to 
         //...
     }
 
+最后，页面标题在主视图（app/views/index.phtml）中打印：
+    
 Finally, the title is printed in the main view (app/views/index.phtml):
 
 .. code-block:: html+php
@@ -1010,8 +1056,10 @@ Finally, the title is printed in the main view (app/views/index.phtml):
         <!-- ... -->
     </html>
 
-Conclusion
+总结
 ==========
+本教程涵盖了使用Phalcon创建应用的很多方面，相信你已经学到了很多，也期望你能学到更多框架之外的知识。
+
 This tutorial covers many more aspects of building applications with Phalcon, hope you have served to learn more and get more out of the framework.
 
 .. _Github: https://github.com/phalcon/invo
