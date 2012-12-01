@@ -1,44 +1,50 @@
 教程三：创建简单的REST API
 ======================================
-在本教程中，我们将会讲解如何使用HTTP方法创建一个简单的 RESTful_ API 应用：
+在本教程中，我们将会讲解如何使用不同的HTTP方法（传说中的get,post,put和delect方法）创建简单的 RESTful_ API 应用：
 
 In this tutorial, we will explain how to create a simple application that provides a RESTful_ API using the different HTTP methods:
 
-* GET - 获取、查询数据
-* POST - 添加数据
-* PUT - 更新数据
+* GET    - 获取、查询数据
+* POST   - 添加数据
+* PUT    - 更新数据
 * DELETE - 删除数据
+
 
 * GET to retrieve and search data
 * POST to add data
 * PUT to update data
 * DELETE to delete data
 
-Defining the API
+定义API
 ----------------
+我们设计的API中包含以下方法：
 
 The API consists of the following methods:
 
 +--------+----------------------------+----------------------------------------------------------+
 | Method |  URL                       | Action                                                   |
 +========+============================+==========================================================+
-| GET    | /api/robots                | Retrieves all robots                                     |
+| GET    | /api/robots                | 获取所有机器人                                           |
 +--------+----------------------------+----------------------------------------------------------+
-| GET    | /api/robots/search/Astro   | Searches for robots with ‘Astro’ in their name           |
+| GET    | /api/robots/search/Astro   | 获取名字中包含‘Astro’的机器人                            |
 +--------+----------------------------+----------------------------------------------------------+
-| GET    | /api/robots/2              | Retrieves robots based on primary key                    |
+| GET    | /api/robots/2              | 通过主键查询机器人                                       |
 +--------+----------------------------+----------------------------------------------------------+
-| POST   | /api/robots                | Adds a new robot                                         |
+| POST   | /api/robots                | 添加机器人                                               |
 +--------+----------------------------+----------------------------------------------------------+
-| PUT    | /api/robots/2              | Updates robots based on primary key                      |
+| PUT    | /api/robots/2              | 根据主键更新机器人                                       |
 +--------+----------------------------+----------------------------------------------------------+
-| DELETE | /api/robots/2              | Deletes robots based on primary key                      |
+| DELETE | /api/robots/2              | 根据主键删除机器人                                       |
 +--------+----------------------------+----------------------------------------------------------+
 
-Creating the Application
+创建应用
 ------------------------
+该应用非常简单，我们甚至不会去实现一个完整的MVC环境。在本教程中，我们使用 :doc:`微型应用 <micro>` 来达到我们的目的。
+
 As the application is so simple, we will not implement any full MVC environment to develop it. In this case, we will use a :doc:`micro application <micro>`
 to meet our goal.
+
+以下文件结构就绰绰有余了：
 
 The following file structure is more than enough:
 
@@ -50,6 +56,8 @@ The following file structure is more than enough:
         index.php
         .htaccess
 
+首先，我们要创建一个.htaccess文件，把所有URI重定向至index.php文件，内容如下：
+        
 First, we need an .htaccess file that contains all the rules to rewrite the URIs to the index.php file, that is our application:
 
 .. code-block:: apacheconf
@@ -60,6 +68,8 @@ First, we need an .htaccess file that contains all the rules to rewrite the URIs
         RewriteRule ^(.*)$ index.php?_url=/$1 [QSA,L]
     </IfModule>
 
+然后，创建index.php文件：
+    
 Then, in the index.php file we create the following:
 
 .. code-block:: php
@@ -72,6 +82,8 @@ Then, in the index.php file we create the following:
 
     $app->handle();
 
+现在，我们按照上面定义的API创建路由：
+    
 Now we will create the routes as we defined above:
 
 .. code-block:: php
@@ -112,13 +124,19 @@ Now we will create the routes as we defined above:
 
     $app->handle();
 
+每个路由都使用某个HTTP方法定义，其第一个参数是路由规则，第二个参数是处理方法。在本教程中，处理方法是一个匿名函数。路由规则：'/api/robots/{id:[0-9]+}'，明确设置参数"id"必须是数字格式。
+    
 Each route is defined with a method with the same name as the HTTP method, as first parameter we pass a route pattern, followed by a handler. In this case
 the handler is an anonymous function. The following route: '/api/robots/{id:[0-9]+}', by example, explicitly set that the "id" parameter must have a numeric format.
 
+当我们定义的某个路由和请求的URI匹配时，应用将会执行相应的处理方法。
+
 When a defined route matches the requested URI then the application will execute the corresponding handler.
 
-Creating a Model
+创建模型
 ----------------
+我们的API提供机器人相关的信息，而这些信息是存储在数据库中的。下面这个模型让我们以面向对象方式访问数据库表。我们已经使用内置的验证器实现了一些业务逻逻和简单地验证。这么做可以确保数据库中的数据满足应用的要求：
+
 Our API provides information about robots, these data are stored in a database. The following model allows us to access that table in an object oriented way.
 We have implemented some business rules using built-in validators and simple validations. Doing this will give us the peace of mind that saved data
 meet the requirements of our application:
@@ -165,6 +183,8 @@ meet the requirements of our application:
 
     }
 
+现在，我们必须建立数据库连接以供模型使用：
+    
 Now, we must set up a connection to be used by this model:
 
 .. code-block:: php
@@ -188,8 +208,10 @@ Now, we must set up a connection to be used by this model:
     //Bind the DI to the application
     $app->setDI($di);
 
-Retrieving Data
+获取数据
 ---------------
+我们要实现的第一个“处理方法”是接受GET请求，并返回所有机器人。我们使用PHQL来执行这个简单的查，并以JSON格式返回结果：
+
 The first "handler" that we will implement is which by method GET returns all available robots. Let's use PHQL to perform this simple query returning the results as JSON:
 
 .. code-block:: php
@@ -214,9 +236,13 @@ The first "handler" that we will implement is which by method GET returns all av
 
     });
 
+:doc:`PHQL <phql>` 可以让我们用一种更高层次、面向对象的SQL方言来书写查询。Phalcon将会根据我们使用的数据库系统把它转换成真正的SQL语句。匿名函数中的"use"可以让我们从全局作用域向函数作用域传递变量，以一种无比简单的方式。
+    
 :doc:`PHQL <phql>`, allow us to write queries using a high level, object oriented SQL dialect that internally
 translates to the right SQL statements depending on the database system we are using. The clause "use" in the anonymous function allows
 us to pass some variables from global to local scope easily.
+
+通过机器人名称检索的处理方法如下：
 
 The searching by name handler would look like:
 
@@ -244,6 +270,8 @@ The searching by name handler would look like:
 
     });
 
+通过字段"id"检索就更为简单了，在本教程中，如果没有找到相关机器人，我们也会发出通知：    
+    
 Searching by the field "id" it's quite similar, in this case, we're also notifying if the robot was found or not:
 
 .. code-block:: php
@@ -273,8 +301,10 @@ Searching by the field "id" it's quite similar, in this case, we're also notifyi
         echo json_encode($response);
     });
 
-Inserting Data
+插入数据
 --------------
+从请求的内容中获取数据（JSON字符串），我们同样使用PHQL来插入数据：
+
 Taking the data as a JSON string inserted in the body of the request, we also use PHQL for insertion:
 
 .. code-block:: php
@@ -320,8 +350,10 @@ Taking the data as a JSON string inserted in the body of the request, we also us
 
     });
 
-Updating Data
+更新数据
 -------------
+数据更新类拟于数据插入。传入的"id"参数表示哪个机器人应该被更新：
+
 The data update is similar to insertion. The "id" passed as parameter indicates what robot must be updated:
 
 .. code-block:: php
@@ -364,9 +396,11 @@ The data update is similar to insertion. The "id" passed as parameter indicates 
 
     });
 
-Deleting Data
+删除数据
 -------------
-The data update is similar to insertion. The "id" passed as parameter indicates what robot must be updated:
+数据删除类似于数据检索（按id）。传入的"id"参数表示哪个机器人应该被删除：
+
+The data update is similar to insertion. The "id" passed as parameter indicates what robot must be updated:【译者注：此处英文可能有误！】
 
 .. code-block:: php
 
@@ -401,9 +435,13 @@ The data update is similar to insertion. The "id" passed as parameter indicates 
 
     });
 
-Testing our Application
+测试应用
 -----------------------
+我们将使用 curl_ 来测试应用中的每个路由，以验证它们的操作是否符合预期：
+
 Using curl_ we'll test every route in our application verifying its proper operation:
+
+获取所有机器人：
 
 Obtain all the robots:
 
@@ -419,6 +457,8 @@ Obtain all the robots:
 
     [{"id":"1","name":"Robotina"},{"id":"2","name":"Astro Boy"},{"id":"3","name":"Terminator"}]
 
+根据名称检索机器人：
+    
 Search a robot by its name:
 
 .. code-block:: bash
@@ -433,6 +473,8 @@ Search a robot by its name:
 
     [{"id":"2","name":"Astro Boy"}]
 
+根据id获取某个机器人：    
+    
 Obtain a robot by its id:
 
 .. code-block:: bash
@@ -447,6 +489,8 @@ Obtain a robot by its id:
 
     {"status":"FOUND","data":{"id":"3","name":"Terminator"}}
 
+插入一个新机器人：
+    
 Insert a new robot:
 
 .. code-block:: bash
@@ -461,6 +505,8 @@ Insert a new robot:
 
     {"status":"OK","data":{"name":"C-3PO","type":"droid","year":1977,"id":"4"}}
 
+尝试插入一个已经存在的机器人（使用相同的名称）：
+    
 Try to insert a new robot with the name of an existing robot:
 
 .. code-block:: bash
@@ -475,6 +521,8 @@ Try to insert a new robot with the name of an existing robot:
 
     {"status":"ERROR","messages":["The robot name must be unique"]}
 
+或者使用未知类型更新机器人：
+    
 Or update a robot with an unknown type:
 
 .. code-block:: bash
@@ -489,6 +537,8 @@ Or update a robot with an unknown type:
 
     {"status":"ERROR","messages":["Value of field 'type' must be part of list: droid, mechanical, virtual"]}
 
+最后，删除一个机器人：
+    
 Finally, delete a robot:
 
 .. code-block:: bash
@@ -503,8 +553,10 @@ Finally, delete a robot:
 
     {"status":"OK"}
 
-Conclusion
+总结
 ----------
+正如上面所描述的一样，使用Phalcon开发Restful API是如此的简单。后续文档中将会详细介绍如何使用“微型应用”和PHQL语言。
+
 As we have seen, develop Restful APIs with Phalcon is easy. Later in the documentation we'll explain in detail how to use micro applications and the PHQL language.
 
 
