@@ -1,27 +1,38 @@
-Hello World Benchmark
+“你好，世界”基准程序
 =====================
 
-How the benchmarks were performed?
+基准程序是如何执行的？
 ----------------------------------
+我们创建了一个“你好，世界”的基准程序，来测试各框架的最小开销。很多人不喜欢这类基准程序，因为实际生产环境的情况要复杂得多。但是，这些测试能够让我们知晓各框架执行简单任务的最短时间。这种任务预示着各框架处理单请求的最小开销。
 
 We created a "Hello World" benchmark seeking to identify the smallest load overhead of each framework. Many people don't like this kind of benchmark because real-world applications require more complex features or structures. However, these tests identify the minimum time spent by each framework to perform a simple task. Such a task represents the mimimum requirement for every framework to process a single request.
 
+更具体地说，这个基本准程序仅仅表示框架启动所需要的时间，运行动作，请求结束时释放资源。任何MVC框架都要执行这个过程。这个基准是如此的简单，任何稍复杂的请求所耗费的时间都会比它长。
+
 More specifically, the benchmark only measures the time it takes for a framework to start, run an action and free up resources at the end of the request. Any PHP application based on an MVC architecture will require this time. Due to the simplicity of the benchmark, we ensure that the time needed for a more complex request will be higher.
+
+我们也为每个框架创建了一个控制器和一个视图。控制器"say"和动作"hello"。在动作中只做一件事，向视图发送数据("Hello!")。使用"ab"基准测试工具，我们对每个框架发送5并发、总共1000次请求。
 
 A controller and a view have been created for each framework. The controller "say" and action "hello". The action only sends data to the view which displays it ("Hello!"). Using the "ab" benchmark tool we sent 1000 requests using 5 concurrent connections to each framework.
 
-What measurements were recorded?
+测试结果如何？
 --------------------------------
+下面是我们考量的方法，以确保能体现每个框架的整体性能：
+
 These were the measurements we record to identify the overall performance of each framework:
+
+* 每秒请求数
+* 所有并发请求的时间
+* 单请求包含的PHP文你看数目（使用 get_included_files_ 函数测量）。
+* 每次请求的内存使用（使用 memory_get_usage_ 函数测量）。
 
 * Requests per second
 * Time across all concurrent requests
 * Number of included PHP files on a single request (measured using function get_included_files_.
 * Memory Usage per request (measured using function memory_get_usage_.
 
-Pariticipant Frameworks
+参与测试的框架
 -----------------------
-
 * Yii_ (YII_DEBUG=false) (yii-1.1.12.b600af)
 * Symfony_ (2.0.11)
 * `Zend Framework`_ (1.11.11)
@@ -32,7 +43,7 @@ Pariticipant Frameworks
 * CodeIgniter_ (2.1.0)
 * Nette_ (2.0.4)
 
-Results
+结果
 -------
 
 Yii (YII_DEBUG=false) Version yii-1.1.12.b600af
@@ -541,8 +552,10 @@ Phalcon Version 0.5.0
 	 100%     17 (longest request)
 
 
-Graphs
+图表
 ^^^^^^
+
+第一张图表显示每个框架每秒处理的请求数。每二张图显示处理所有并发请求的平均时间。
 
 The first graph shows how many requests per second each framework was able to accept. The second shows the average time across all concurrent requests.
 
@@ -667,8 +680,9 @@ The first graph shows how many requests per second each framework was able to ac
 		<div id="mpr_div" style="width: 600px; height: 400px; position: relative; "><iframe name="Drawing_Frame_77939" id="Drawing_Frame_77939" width="600" height="400" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><div></div></div>
 	</div>
 
-Conclusion
+总结
 ----------
+Phalcon是编译好的C-扩展，因为这个特性，在这些基准测试中，它的性能表现远优于其他框架。
 
 The compiled nature of Phalcon offers extraordinary performance that outperforms all other frameworks measured in these benchmarks.
 
