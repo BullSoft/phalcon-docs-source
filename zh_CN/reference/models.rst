@@ -366,29 +366,39 @@ Bound parameters are available for all query methods such as find() and findFirs
 
 关系模型
 ----------------------------
+一共有四种关系：一对一，一对多，多对一和多对多。关系既可以是单向的也可以是双向的，既可以是简单的（如一对一模型），也可以是复杂的（如组合模型）。模型管理器为这些关系管理外键约束，关系的定义能提高引用完整性，也能让我们简单快速地通过模型访问相关记录。通过实现关系，就能以一种统一且简单的方式访问某条记录的相关数据了。
+
 There are four types of relationships: one-on-one, one-to-many, many-to-one and many-to-many. The relationship may be unidirectional or bidirectional, and each can be simple (a one to one model) or more complex (a combination of models). The model manager manages foreign key constraints for these relationships, the definition of these helps referential integrity as well as easy and fast access of related records to a model. Through the implementation of relations, it is easy to access data in related models from each record in a uniform way.
 
-Unidirectional relationships
+单向关系
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+单向关系是那些A到B的关系成立，但B到A的关系却不成立的关系。
+
 Unidirectional relations are those that are generated in relation to one another but not vice versa.
 
-Bidirectional relations
+双向关系
 ^^^^^^^^^^^^^^^^^^^^^^^
+双向关系在两个模型中都建立关联，A模型内部定义与B模型相反的关联。
+
 The bidirectional relations build relationships in both models and each model defines the inverse relationship of the other.
 
-Defining relationships
+定义关系
 ^^^^^^^^^^^^^^^^^^^^^^
+在Phalcon中，关联必须在模型的initialize()方法中定义。belongsTo()，hasOne()和hasMany()三个方法在当前模型字段和另一个模型的字段之间定义关联。每个方法接收3个参数：当前模型字段，关联模型和关联模型字段。
+
 In Phalcon, relationships must be defined in the initialize() method of a model. The methods belongsTo(), hasOne() or hasMany() define the relationship between one or more fields from the current model to fields in another model. Each of these methods requires 3 parameters: local fields, referenced model, referenced fields.
 
 +-----------+----------------------------+
-| Method    | Description                |
+| 方法      | 描述                       |
 +===========+============================+
-| hasMany   | Defines a 1-n relationship |
+| hasMany   | 定义1-n关系                |
 +-----------+----------------------------+
-| hasOne    | Defines a 1-1 relationship |
+| hasOne    | 定义1-1关系                |
 +-----------+----------------------------+
-| belongsTo | Defines a n-1 relationship |
+| belongsTo | 定义n-1关系                |
 +-----------+----------------------------+
+
+下面的SQL模式创建了3张数据库表，它们之前的关系是一个很好的关联示例：
 
 The following schema shows 3 tables whose relations will serve us as an example regarding relationships:
 
@@ -418,9 +428,15 @@ The following schema shows 3 tables whose relations will serve us as an example 
         PRIMARY KEY (`id`)
     );
 
+* "Robots"有很多"RobotsParts"。
+* "Parts"有很多"RobotsParts"。
+* "RobotsParts"属于"Robots"，并且和"Parts"有一对多关系。
+    
 * The model "Robots" has many "RobotsParts".
 * The model "Parts" has many "RobotsParts".
 * The model "RobotsParts" belongs to "Robots" and "Parts" models as a one-to-many relation.
+
+模型之间的关系可以如下实现：
 
 The models with their relations could be implemented as follows:
 
@@ -466,10 +482,14 @@ The models with their relations could be implemented as follows:
 
     }
 
+第一个参数是当前模型的字段，第二个参数是关联模型的名称，第三个参数是关联模型的字段。你也可以使用数组定义多字段。
+    
 The first parameter indicates the field of the local model used in the relationship; the second indicates the name of the referenced model and the third the field name in the referenced model. You could also use arrays to define multiple fields in the relationship.
 
-Taking advantage of relationships
+关系模型的优势
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+明确定义模型之间的关系，让我们很容易找到某特定记录的相关记录。
+
 When explicitly defining the relationships between models, it is easy to find related records for a particular record.
 
 .. code-block:: php
@@ -481,6 +501,8 @@ When explicitly defining the relationships between models, it is easy to find re
         echo $robotPart->getParts()->name, "\n";
     }
 
+Phalcon使用魔术方法__call从关联模型中获取数据。如果被调用的方法名以"get"开始，:doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>` 会调用findFirst()/find()方法，并返回其结果。下面的示例将会分别使用和不使用魔术方法来获取关联结果：
+    
 Phalcon uses the magic method __call to retrieve data from a relationship. If the called method has a "get" prefix :doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>` will return a findFirst()/find() result. The following example compares retrieving related results with using the magic method and without:
 
 .. code-block:: php
@@ -526,7 +548,8 @@ Phalcon uses the magic method __call to retrieve data from a relationship. If th
     // relationship to RobotsParts then
     $robot = Robots::findFirst("id = '" . $robotPart->robots_id . "'");
 
-
+"get"前缀告诉Phalcon使用find()/findFirst()方法获取相关记录。你也可以使用"count"作为前缀，获取相关记录的总数：
+    
 The prefix "get" is used to find()/findFirst() related records. You can also use "count" prefix to return an integer denoting the count of the related records:
 
 .. code-block:: php
@@ -536,9 +559,13 @@ The prefix "get" is used to find()/findFirst() related records. You can also use
     $robot = Robots::findFirst(2);
     echo "The robot have ", $robot->countRobotsParts(), " parts\n";
 
-Virtual Foreign Keys
+虚拟外键
 ^^^^^^^^^^^^^^^^^^^^
+默认情况下，关系模型不能真正处理外键约束，也即，如果你尝试插入/更新的值在关联模型中不存在，Phalcon不会产生验证失败消息。你可以在定义关系的时候添加第四个参数来改变这种默认的处理方式。
+
 By default, relationships do not act like database foreign keys, that is, if you try to insert/update a value without having a valid value in the referenced model, Phalcon will not produce a validation message. You can modify this behavior by adding a fourth parameter when defining a relationship.
+
+我们现在修改一下RobotsPart模型，用于演示这个特性：
 
 The RobotsPart model can be changed to demonstrate this feature:
 
@@ -564,6 +591,8 @@ The RobotsPart model can be changed to demonstrate this feature:
 
     }
 
+如果你修改belongsTo()关系让其处理外键约束，Phalcon将会验证插入/更新的值，以确保关联模型中该值也存在。类似地，如果修改hasMany()/hasOne()关系让其处理外键约束，当某记录存在于关联模型中时，Phalcon将会验证该记录不能被删除。
+   
 If you alter a belongsTo() relationship to act as foreign key, it will validate that the values inserted/updated on those fields have a valid value on the referenced model. Similarly, if a hasMany()/hasOne() is altered it will validate that the records cannot be deleted if that record is used on a referenced model.
 
 .. code-block:: php
@@ -584,9 +613,13 @@ If you alter a belongsTo() relationship to act as foreign key, it will validate 
 
     }
 
-Generating Calculations
+生成统计
 -----------------------
+统计基于数据库系统的常用函数，如：COUNT, SUM, MAX, MIN和AVG。:doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>` 允许我们使用类方法直接访问这些函数。
+
 Calculations are helpers for commonly used functions of database systems such as COUNT, SUM, MAX, MIN or AVG. :doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>` allows to use these functions directly from the exposed methods.
+
+统计总数示例：
 
 Count examples:
 
@@ -617,6 +650,8 @@ Count examples:
         )
     );
 
+统计求和示例：    
+    
 Sum examples:
 
 .. code-block:: php
@@ -655,6 +690,8 @@ Sum examples:
         )
     );
 
+统计平均数示例：
+    
 Average examples:
 
 .. code-block:: php
@@ -672,6 +709,8 @@ Average examples:
         )
     );
 
+统计最大/最小示例：
+    
 Max/Min examples:
 
 .. code-block:: php
@@ -692,11 +731,17 @@ Max/Min examples:
     // What is the lowest salary of all employees?
     $salary = Employees::minimum(array("column" => "salary"));
 
-Caching Resultsets
+缓存结果集
 ^^^^^^^^^^^^^^^^^^
+数据库访问是最常见的性能瓶颈之一。这是因为在每次请求时PHP都需要执行复杂的数据库连接以获取数据。不过幸好已经有较完善的技术方案来避免持续访问数据库，那就是：缓存系统中不会频繁变更的数据以提供快速的查询（通常是内存）。
+
 Access to database systems is often one of the most common bottlenecks in terms of performance. This is due to the complex connection process that PHP must do in each request to obtain data from the database. A well established technique to avoid the continuous access to the database is to cache resultsets that don't change frequently in a system with faster access (usually memory).
 
+当 :doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>` 需要缓存结果集时，它将会向依赖注入容器请求名为"modelsCache"的服务。
+
 When :doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>` requires a service to cache resultsets, it will request it to the Dependency Injector Container with the convention name "modelsCache".
+
+由于Phalcon提供了能缓存任何数据类型的组件，我们稍后会介绍如何在模型中使用它。不过首先你要在服务容器中把它注册为服务：
 
 As Phalcon provides a component to cache any kind of data, we'll explain how to integrate it with Models. First you need to register it as a service in the services container:
 
@@ -721,6 +766,8 @@ As Phalcon provides a component to cache any kind of data, we'll explain how to 
         return $cache;
     });
 
+在服务生效前，你可以按自己意愿创建和定制缓存。当缓存被正确建立后，你就可以像这样缓存结果集：
+    
 You have complete control in creating and customizing the cache before being used to record the service as an anonymous function. Once the cache setup is properly defined you could cache resultsets as follows:
 
 .. code-block:: php
@@ -752,6 +799,8 @@ You have complete control in creating and customizing the cache before being use
     // Using a custom cache
     $products = Products::find(array("cache" => $myCache));
 
+默认情况下，:doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>` 在存储结果集时会为其分配一个唯一键，通常是SQL语句的Md5值。这是非常实用的，因为模型的参数发生任何细微的变化都会导致生成一个新的唯一键。如果你想自定义缓存结果集的键，你可以像上面示例一样始终使用key参数。getLastKey()方法可以获取最近一次缓存的结果集的键，使用该方法你可以事后从缓存中定位和获取结果集：
+    
 By default, :doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>` will create a unique key to store the resultset, using a md5 hash of the SQL select statement generated internally. This is very practical because it generates a new unique key for every change in the parameters passed in the object. If you wish to control the cache keys, you could always use the key() parameter as seen in the example above. The getLastKey() method retrieves the key of the last cached entry so that you can target and retrieve the resultset later on from the cache.:
 
 .. code-block:: php
@@ -769,6 +818,8 @@ By default, :doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>` will create a 
         //...
     }
 
+缓存键是由 :doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>` 自动生成的，并以"phc"作为前缀。这能帮助我们很容易地识别出和 :doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>` 相关的缓存记录：
+
 Cache keys automatically generated by :doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>` are always prefixed with "phc". This helps to easily identify the cached entries related to :doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>`:
 
 .. code-block:: php
@@ -783,7 +834,11 @@ Cache keys automatically generated by :doc:`Phalcon\\Mvc\\Model <../api/Phalcon_
          echo $key, "\n";
     }
 
+有一点要注意，不是所有的结果集都必须被缓存的，那些频繁变更的结果就不应该被缓存因为它们很快就会变成无效数据，缓存它们会影响性能。此外，不会频繁变更的大数据也可以被缓存，但是开发者必须在以下两个方法做出决定：可用的缓存机制和是否接受简单获取数据的性能损失。
+    
 Note that not all resultsets must be cached. Results that change very frequently should not be cached since they are invalidated very quickly and caching in that case impacts performance. Additionally, large datasets that do not change frequently could be cached but that is a decision that the developer has to make based on the available caching mechanism and whether the performance impact to simply retrieve that data in the first place is acceptable.
+
+缓存也同样可以作用于关系模型产生的结果集：
 
 Caching could be also applied to resultsets generated using relationships:
 
@@ -800,11 +855,17 @@ Caching could be also applied to resultsets generated using relationships:
     // Get comments related to a post, setting lifetime
     $comments = $post->getComments(array("cache" => true, "lifetime" => 3600));
 
+当缓存的结果集过期时，你可以轻易地使用产生的键把它从缓存中删除即可。    
+    
 When a cached resultset needs to be invalidated, you can simply delete it from the cache using the generated key.
 
-Creating Updating/Records
+创建或更新记录
 -------------------------
+Phalcon\\Mvc\\Model::save()方法允许你创建/更新记录，究竟是创建还是更新取决于这些记录在模型映射的表中是否存在。:doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>` 的create()和update()方法内部调用的就是save()方法。要让这如预期一样运作，有必要在表中恰当地定义主键，以便确定某条记录是需要更新还是创建。
+
 The method Phalcon\\Mvc\\Model::save() allows you to create/update records according to whether they already exist in the table associated with a model. The save method is called internally by the create and update methods of :doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>`. For this to work as expected it is necessary to have properly defined a primary key in the entity to determine whether a record should be updated or created.
+
+同样，save()方法还会执行相关的验证器，虚拟外键约束以及在模型中定义的事件：
 
 Also the method executes associated validators, virtual foreign keys and events that are defined in the model:
 
@@ -825,8 +886,10 @@ Also the method executes associated validators, virtual foreign keys and events 
         echo "Great, a new robot was saved successfully!";
     }
 
-Create/Update with Certainty
+创建和更新记录
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+当一个应用有很多并发访问时，我们期望创建记录，但实际上做的是更新操作。如果我们使用Phalcon\\Mvc\\Model::save()方法保存记录，这完全是有可能发生的。如果我们确定某条记录是要创建还是更新，我们可以使用"create"或"update"方法代替"save"方法：
+
 When an application has a lot of competition, maybe we expect to create a record but that is actually updated. This could happen if we use Phalcon\\Mvc\\Model::save() to persist the records in the database. If we want to be certain that a record will be created or updated created we can change save by "create" or "update":
 
 .. code-block:: php
