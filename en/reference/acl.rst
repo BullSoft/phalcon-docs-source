@@ -1,8 +1,11 @@
 Access Control Lists ACL
 ========================
-:doc:`Phalcon\\Acl <../api/Phalcon_Acl>` provides an easy and lightweight management of ACLs as well as the permissions attached to them. `Access Control Lists`_ (ACL) allow an application to control access to its areas and the underlying objects from requests. You are encouraged to read more about the ACL methodology so as to be familiar with its concepts.
+:doc:`Phalcon\\Acl <../api/Phalcon_Acl>` provides an easy and lightweight management of ACLs as well as the permissions
+attached to them. `Access Control Lists`_ (ACL) allow an application to control access to its areas and the underlying
+objects from requests. You are encouraged to read more about the ACL methodology so as to be familiar with its concepts.
 
-In summary, ACLs have roles and resources. Resources are objects which abide by the permissions defined to them by the ACLs. Roles are objects that request access to resources and can be allowed or denied access by the ACL mechanism.
+In summary, ACLs have roles and resources. Resources are objects which abide by the permissions defined to them by
+the ACLs. Roles are objects that request access to resources and can be allowed or denied access by the ACL mechanism.
 
 Creating an ACL
 ---------------
@@ -34,12 +37,12 @@ A role is an object that can or cannot access certain resources in the access li
     $roleGuests = new \Phalcon\Acl\Role("Guests");
 
     // Add "Guests" role to acl
-    acl->addRole($roleGuests);
+    $acl->addRole($roleGuests);
 
     // Add "Designers" role to acl without a Phalcon\Acl\Role
     $acl->addRole("Designers");
 
-As you can see, roles are defined directly without using a instance.
+As you can see, roles are defined directly without using an instance.
 
 Adding Resources
 ----------------
@@ -104,7 +107,8 @@ You can build complex role structures using the inheritance that :doc:`Phalcon\\
 
 Serializing ACL lists
 ---------------------
-To improve performance :doc:`Phalcon\\Acl <../api/Phalcon_Acl>` instances can be serialized and stored in text files or a database table so that they can be loaded at will without having to redefine the whole list. You can do that as follows:
+To improve performance :doc:`Phalcon\\Acl <../api/Phalcon_Acl>` instances can be serialized and stored in APC, session, text files or a database table
+so that they can be loaded at will without having to redefine the whole list. You can do that as follows:
 
 .. code-block:: php
 
@@ -113,7 +117,7 @@ To improve performance :doc:`Phalcon\\Acl <../api/Phalcon_Acl>` instances can be
     //Check whether acl data already exist
     if (!file_exists("app/security/acl.data")) {
 
-        $acl = new \Phalcon\Acl("Memory");
+        $acl = new \Phalcon\Acl\Adapter\Memory();
 
         //... Define roles, resources, access, etc
 
@@ -133,6 +137,48 @@ To improve performance :doc:`Phalcon\\Acl <../api/Phalcon_Acl>` instances can be
         echo "Access denied :(";
     }
 
+Acl Events
+----------
+:doc:`Phalcon\\Acl <../api/Phalcon_Acl>` is able to send events to a :doc:`EventsManager <events>` if it's present. Events
+are triggered using the type "acl". Some events when returning boolean false could stop the active operation. The following events are supported:
 
++----------------------+------------------------------------------------------------+---------------------+
+| Event Name           | Triggered                                                  | Can stop operation? |
++======================+============================================================+=====================+
+| beforeCheckAccess    | Triggered before checking if a role/resource has access    | Yes                 |
++----------------------+------------------------------------------------------------+---------------------+
+| afterCheckAccess     | Triggered after checking if a role/resource has access     | No                  |
++----------------------+------------------------------------------------------------+---------------------+
+
+The following example demonstrates how to attach listeners to this component:
+
+.. code-block:: php
+
+    <?php
+
+    //Create an event manager
+    $eventsManager = new Phalcon\Events\Manager();
+
+    //Attach a listener for type "acl"
+    $eventsManager->attach("acl", function($event, $acl) {
+        if ($event->getType() == 'beforeCheckAccess') {
+             echo   $acl->getActiveRole(),
+                    $acl->getActiveResource(),
+                    $acl->getActiveAccess();
+        }
+    });
+
+    $acl = new \Phalcon\Acl\Adapter\Memory();
+
+    //Setup the $acl
+    //...
+
+    //Bind the eventsManager to the acl component
+    $acl->setEventsManager($eventManagers);
+
+Implementing your own adapters
+------------------------------
+The :doc:`Phalcon\\Acl\\AdapterInterface <../api/Phalcon_Acl_AdapterInterface>` interface must be implemented in order
+to create your own ACL adapters or extend the existing ones.
 
 .. _Access Control Lists: http://en.wikipedia.org/wiki/Access_control_list

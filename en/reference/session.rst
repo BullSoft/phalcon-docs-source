@@ -1,7 +1,12 @@
 Storing data in Session
 =======================
-
 The :doc:`Phalcon\\Session <../api/Phalcon_Session>` provides object-oriented wrappers to access session data.
+
+Reasons to use this component instead of raw-sessions:
+
+* You can easily isolate session data across applications on the same domain
+* Intercept where session data is set/get in your application
+* Change the session adapter according to the application needs
 
 Starting the Session
 --------------------
@@ -13,7 +18,7 @@ Thanks to the service container, we can ensure that the session is accessed only
     <?php
 
     //Start the session the first time when some component request the session service
-    $di->set('session', function(){
+    $di->setShared('session', function() {
         $session = new Phalcon\Session\Adapter\Files();
         $session->start();
         return $session;
@@ -21,7 +26,7 @@ Thanks to the service container, we can ensure that the session is accessed only
 
 Storing/Retrieving data in Session
 ----------------------------------
-From a controller, a view or any other component thats extends :doc:`Phalcon\\DI\\Injectable <../api/Phalcon_DI_Injectable>` you can access the session service
+From a controller, a view or any other component that extends :doc:`Phalcon\\DI\\Injectable <../api/Phalcon_DI_Injectable>` you can access the session service
 and store items and retrieve them in the following way:
 
 .. code-block:: php
@@ -44,7 +49,7 @@ and store items and retrieve them in the following way:
             if ($this->session->has("user-name")) {
 
                 //Retrieve its value
-                $name = $this->session->set("user-name");
+                $name = $this->session->get("user-name");
             }
         }
 
@@ -89,9 +94,11 @@ prefix for every session variable created in a certain application:
     $di->set('session', function(){
 
         //All variables created will prefixed with "my-app-1"
-        $session = new Phalcon\Session\Adapter\Files(array(
-            'uniqueId' => 'my-app-1'
-        ));
+        $session = new Phalcon\Session\Adapter\Files(
+            array(
+                'uniqueId' => 'my-app-1'
+            )
+        );
 
         $session->start();
 
@@ -108,9 +115,10 @@ it's automatically stored in session:
 
     <?php
 
-    $user = new Phalcon\Session\Bag();
+    $user       = new Phalcon\Session\Bag('user');
+    $user->setDI($di);
     $user->name = "Kimbra Johnson";
-    $user->age = 22;
+    $user->age  = 22;
 
 
 Persistent Data in Components
@@ -128,13 +136,14 @@ Thanks to this you can persist data between requests in every class in an indepe
 
         public function indexAction()
         {
-            //Create a persistent variable "name"
+            // Create a persistent variable "name"
             $this->persistent->name = "Laura";
         }
 
         public function welcomeAction()
         {
-            if (isset($this->persistent->name)) {
+            if (isset($this->persistent->name))
+            {
                 echo "Welcome, ", $this->persistent->name;
             }
         }
@@ -152,7 +161,7 @@ In a component:
 
         public function auth()
         {
-            //Create a persistent variable "name"
+            // Create a persistent variable "name"
             $this->persistent->name = "Laura";
         }
 
@@ -165,3 +174,9 @@ In a component:
 
 The data added to the session ($this->session) are available throughout the application, while persistent ($this->persistent)
 can only be accessed in the scope of the current class.
+
+Implementing your own adapters
+------------------------------
+The :doc:`Phalcon\\Session\\AdapterInterface <../api/Phalcon_Session_AdapterInterface>` interface must be implemented in order to create your own session adapters or extend the existing ones.
+
+There are more adapters available for this components in the `Phalcon Incubator <https://github.com/phalcon/incubator/tree/master/Library/Phalcon/Session/Adapter>`_

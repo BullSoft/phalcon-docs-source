@@ -3,6 +3,9 @@ Class **Phalcon\\CLI\\Router\\Exception**
 
 *extends* :doc:`Phalcon\\Exception <Phalcon_Exception>`
 
+Exceptions thrown in Phalcon\\CLI\\Router will use this class
+
+
 Methods
 ---------
 
@@ -12,7 +15,7 @@ Clone the exception
 
 
 
-public  **__construct** (*string* $message, *int* $code, *Exception* $previous) inherited from Exception
+public  **__construct** ([*string* $message], [*int* $code], [*Exception* $previous]) inherited from Exception
 
 Exception constructor
 

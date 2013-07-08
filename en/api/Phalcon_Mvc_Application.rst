@@ -3,7 +3,9 @@ Class **Phalcon\\Mvc\\Application**
 
 *extends* :doc:`Phalcon\\DI\\Injectable <Phalcon_DI_Injectable>`
 
-This component encapsulates all the complex operations behind instantiating every component needed and integrating it with the rest to allow the MVC pattern to operate as desired. 
+*implements* :doc:`Phalcon\\Events\\EventsAwareInterface <Phalcon_Events_EventsAwareInterface>`, :doc:`Phalcon\\DI\\InjectionAwareInterface <Phalcon_DI_InjectionAwareInterface>`
+
+This component encapsulates all the complex operations behind instantiating every component needed and integrating it with the rest to allow the MVC pattern to operate as desired.  
 
 .. code-block:: php
 
@@ -12,17 +14,18 @@ This component encapsulates all the complex operations behind instantiating ever
      class Application extends \Phalcon\Mvc\Application
      {
     
-    	/**
-    	 * Register the services here to make them general or register in the ModuleDefinition to make them module-specific
-    	 *\/
+    	/\**
+    	 * Register the services here to make them general or register
+    	 * in the ModuleDefinition to make them module-specific
+    	 */
     	protected function _registerServices()
     	{
     
     	}
     
-    	/**
-    	 * This method execute the right module
-    	 *\/
+    	/\**
+    	 * This method registers all the modules in the application
+    	 */
     	public function main()
     	{
     		$this->registerModules(array(
@@ -46,31 +49,19 @@ This component encapsulates all the complex operations behind instantiating ever
 Methods
 ---------
 
-public  **setDI** (:doc:`Phalcon\\DI <Phalcon_DI>` $dependencyInjector)
-
-Sets the DependencyInjector container
+public  **__construct** ([:doc:`Phalcon\\DI <Phalcon_DI>` $dependencyInjector])
 
 
 
-public :doc:`Phalcon\\DI <Phalcon_DI>`  **getDI** ()
-
-Returns the DependencyInjector container
 
 
+public  **useImplicitView** (*boolean* $implicitView)
 
-public  **setEventsManager** (:doc:`Phalcon\\Events\\Manager <Phalcon_Events_Manager>` $eventsManager)
-
-Sets the events manager
+By default. The view is implicitly buffering all the output You can full disable the view component using this method
 
 
 
-public :doc:`Phalcon\\Events\\Manager <Phalcon_Events_Manager>`  **getEventsManager** ()
-
-Returns the internal event manager
-
-
-
-public  **registerModules** (*array* $modules)
+public  **registerModules** (*array* $modules, [*boolean* $merge])
 
 Register an array of modules present in the application 
 
@@ -98,9 +89,45 @@ Return the modules registered in the application
 
 
 
-public :doc:`Phalcon\\Http\\Response <Phalcon_Http_Response>`  **handle** ()
+public  **setDefaultModule** (*string* $defaultModule)
+
+Sets the module name to be used if the router doesn't return a valid module
+
+
+
+public *string*  **getDefaultModule** ()
+
+Returns the default module name
+
+
+
+public :doc:`Phalcon\\Http\\ResponseInterface <Phalcon_Http_ResponseInterface>`  **handle** ([*string* $uri])
 
 Handles a MVC request
+
+
+
+public  **setDI** (:doc:`Phalcon\\DiInterface <Phalcon_DiInterface>` $dependencyInjector) inherited from Phalcon\\DI\\Injectable
+
+Sets the dependency injector
+
+
+
+public :doc:`Phalcon\\DiInterface <Phalcon_DiInterface>`  **getDI** () inherited from Phalcon\\DI\\Injectable
+
+Returns the internal dependency injector
+
+
+
+public  **setEventsManager** (:doc:`Phalcon\\Events\\ManagerInterface <Phalcon_Events_ManagerInterface>` $eventsManager) inherited from Phalcon\\DI\\Injectable
+
+Sets the event manager
+
+
+
+public :doc:`Phalcon\\Events\\ManagerInterface <Phalcon_Events_ManagerInterface>`  **getEventsManager** () inherited from Phalcon\\DI\\Injectable
+
+Returns the internal event manager
 
 
 

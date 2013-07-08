@@ -1,6 +1,5 @@
 Command Line Applications
 =========================
-
 CLI applications are executed from the command line. They are useful to create cron jobs, scripts, command utilities and more.
 
 Tasks
@@ -9,29 +8,36 @@ Tasks are similar to controllers, on them can be implemented
 
 .. code-block:: php
 
-	<?php
+    <?php
 
-	class MonitoringTask extends \Phalcon\CLI\Task
-	{
+    class MonitoringTask extends \Phalcon\CLI\Task
+    {
 
-	    public function mainAction()
-	    {
+        public function mainAction()
+        {
 
-	    }
+        }
 
-	}
+    }
+
+Creating a Bootstrap
+--------------------
+As MVC applications, a bootstrap is available to
 
 .. code-block:: php
 
-	<?php
+    <?php
 
-	//Using the CLI factory default services container
-	$di = new Phalcon\DI\FactoryDefault\CLI();
+    use Phalcon\DI\FactoryDefault\CLI as CliDI,
+        Phalcon\CLI\Console as ConsoleApp;
 
-	//Create a console application
-	$console = new \Phalcon\CLI\Console();
-	$console->setDI($di);
+    //Using the CLI factory default services container
+    $di = new CliDI();
 
-	//
-	$console->handle(array('shell_script_name', 'echo'));
+    //Create a console application
+    $console = new ConsoleApp();
+    $console->setDI($di);
+
+    //
+    $console->handle(array('task' => 'shell_script_name', 'action' => 'echo'));
 

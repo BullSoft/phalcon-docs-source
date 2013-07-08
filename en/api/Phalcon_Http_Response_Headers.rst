@@ -1,16 +1,13 @@
 Class **Phalcon\\Http\\Response\\Headers**
 ==========================================
 
+*implements* :doc:`Phalcon\\Http\\Response\\HeadersInterface <Phalcon_Http_Response_HeadersInterface>`
+
 This class is a bag to manage the response headers
 
 
 Methods
 ---------
-
-public  **__construct** ()
-
-...
-
 
 public  **set** (*string* $name, *string* $value)
 
@@ -42,7 +39,7 @@ Reset set headers
 
 
 
-public static :doc:`Phalcon\\Http\\Response\\Headers <Phalcon_Http_Response_Headers>`  **__set_state** (*unknown* $data)
+public static :doc:`Phalcon\\Http\\Response\\Headers <Phalcon_Http_Response_Headers>`  **__set_state** (*array* $data)
 
 Restore a Phalcon\\Http\\Response\\Headers object
 

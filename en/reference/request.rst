@@ -1,9 +1,9 @@
 Request Environment
 ===================
 Every HTTP request (usually originated by a browser) contains additional information regarding the request such as header data,
-files, variables etc. A web based application needs to parse that information so as to provide the correct
-response back to the requester. :doc:`Phalcon\\HTTP\\Request <../api/Phalcon_Http_Request>` encapsulates the
-information of the request, allowing you to access it in an object oriented way.
+files, variables, etc. A web based application needs to parse that information so as to provide the correct
+response back to the requester. :doc:`Phalcon\\Http\\Request <../api/Phalcon_Http_Request>` encapsulates the
+information of the request, allowing you to access it in an object-oriented way.
 
 .. code-block:: php
 
@@ -14,6 +14,7 @@ information of the request, allowing you to access it in an object oriented way.
 
     // Check whether the request was made with method POST
     if ($request->isPost() == true) {
+
         // Check whether the request was made with Ajax
         if ($request->isAjax() == true) {
             echo "Request was made using POST and AJAX";
@@ -27,9 +28,9 @@ contain the values present in forms submitted or the parameters sent via the URL
 never sanitized and can contain illegal characters or even malicious code, which can lead to `SQL injection`_ or
 `Cross Site Scripting (XSS)`_ attacks.
 
-:doc:`Phalcon\\HTTP\\Request <../api/Phalcon_Http_Request>` allows you to access the values stored in the $_GET
-and $_POST arrays and sanitize or filter them with :doc:`Phalcon\\Filter <../api/Phalcon_Filter>`. The following
-examples offer the same behavior:
+:doc:`Phalcon\\Http\\Request <../api/Phalcon_Http_Request>` allows you to access the values stored in the $_REQUEST,
+$_GET and $_POST arrays and sanitize or filter them with the 'filter' service, (by default
+:doc:`Phalcon\\Filter <filter>`). The following examples offer the same behavior:
 
 .. code-block:: php
 
@@ -37,6 +38,7 @@ examples offer the same behavior:
 
     // Manually applying the filter
     $filter = new Phalcon\Filter();
+
     $email  = $filter->sanitize($_POST["user_email"], "email");
 
     // Manually applying the filter to the value
@@ -46,18 +48,26 @@ examples offer the same behavior:
     // Automatically applying the filter
     $email = $request->getPost("user_email", "email");
 
+    // Setting a default value if the param is null
+    $email = $request->getPost("user_email", "email", "some@example.com");
+
+    // Setting a default value if the param is null without filtering
+    $email = $request->getPost("user_email", null, "some@example.com");
+
 
 Accessing the Request from Controllers
 --------------------------------------
 The most common place to access the request environment is in an action of a controller. To access the
-:doc:`Phalcon\\HTTP\\Request <../api/Phalcon_Http_Request>` object from a controller you will need to use
+:doc:`Phalcon\\Http\\Request <../api/Phalcon_Http_Request>` object from a controller you will need to use
 the $this->request public property of the controller:
 
 .. code-block:: php
 
     <?php
 
-    class PostsController extends \Phalcon\Mvc\Controller
+    use Phalcon\Mvc\Controller;
+
+    class PostsController extends Controller
     {
 
         public function indexAction()
@@ -83,23 +93,31 @@ the $this->request public property of the controller:
 
 Uploading Files
 ---------------
-Another common task is file uploading. :doc:`Phalcon\\HTTP\\Request <../api/Phalcon_Http_Request>` offers
-an object oriented way to achieve this task:
+Another common task is file uploading. :doc:`Phalcon\\Http\\Request <../api/Phalcon_Http_Request>` offers
+an object-oriented way to achieve this task:
 
 .. code-block:: php
 
     <?php
 
-    class PostsController extends \Phalcon\Mvc\Controller
+    use Phalcon\Mvc\Controller;
+
+    class PostsController extends Controller
     {
 
         public function uploadAction()
         {
             // Check if the user has uploaded files
             if ($this->request->hasFiles() == true) {
+
                 // Print the real file names and sizes
                 foreach ($this->request->getUploadedFiles() as $file) {
+
+                    //Print file details
                     echo $file->getName(), " ", $file->getSize(), "\n";
+
+                    //Move the file into the application
+                    $file->moveTo('files/' . $file->getName());
                 }
             }
         }
@@ -113,8 +131,8 @@ only the information related to each file uploaded with the request.
 
 Working with Headers
 --------------------
-As mentioned above, request headers contain useful information that allow us to send the proper response back to t
-he user. The following examples show usages of that information:
+As mentioned above, request headers contain useful information that allow us to send the proper response back to
+the user. The following examples show usages of that information:
 
 .. code-block:: php
 

@@ -1,7 +1,9 @@
 Class **Phalcon\\Http\\Request\\File**
 ======================================
 
-Provides OO wrappers to the $_FILES superglobal 
+*implements* :doc:`Phalcon\\Http\\Request\\FileInterface <Phalcon_Http_Request_FileInterface>`
+
+Provides OO wrappers to the $_FILES superglobal  
 
 .. code-block:: php
 
@@ -10,16 +12,16 @@ Provides OO wrappers to the $_FILES superglobal
     class PostsController extends \Phalcon\Mvc\Controller
     {
     
-    public function uploadAction()
-    {
-    	//Check if the user has uploaded files
-    	if ($this->request->hasFiles() == true) {
-    		//Print the real file names and their sizes
-    		foreach ($this->request->getUploadedFiles() as $file){
-    			echo $file->getName(), " ", $file->getSize(), "\n";
+    	public function uploadAction()
+    	{
+    		//Check if the user has uploaded files
+    		if ($this->request->hasFiles() == true) {
+    			//Print the real file names and their sizes
+    			foreach ($this->request->getUploadedFiles() as $file){
+    				echo $file->getName(), " ", $file->getSize(), "\n";
+    			}
     		}
     	}
-    }
     
     }
 
@@ -52,9 +54,21 @@ Returns the temporal name of the uploaded file
 
 
 
-public  **moveTo** (*string* $destination)
+public *string*  **getType** ()
 
-Move the temporary file to a destination
+Returns the mime type reported by the browser This mime type is not completely secure, use getRealType() instead
+
+
+
+public *string*  **getRealType** ()
+
+Gets the real mime type of the upload file using finfo
+
+
+
+public *boolean*  **moveTo** (*string* $destination)
+
+Moves the temporary file to a destination within the application
 
 
 
