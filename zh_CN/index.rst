@@ -1,7 +1,7 @@
 欢迎词！
 ========
 
-欢迎莅临Phalcon框架，Phalcon也作falcon，意为猎鹰，一种猛禽，飞得快，飞得高，飞得好，她是对PHP框架的新尝试。我们的目标是给您提供一个先进的网站开发工具和应用程序集，而且您无需考虑性能问题。
+欢迎来到Phalcon框架，Phalcon也作falcon，意为猎鹰，一种猛禽，飞得快，飞得高，飞得好，她是对PHP框架的新尝试。我们的目标是给您提供一个先进的网站开发工具和应用程序集，而且您无需考虑性能问题。
 
 Welcome to Phalcon framework, a new approach on PHP frameworks. Our mission is to give you an advanced tool for developing web sites and applications without worrying about performance.
 
