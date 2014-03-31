@@ -1,14 +1,16 @@
 .project
 build
 en/_build
-zh/_build
+zh
+es
+fr
+ja
+pl
+pt
+ru
 _templates
 *.komodoproject
 *.sublime-*
 .pydevproject
 .idea/
-<<<<<<< HEAD
-
 .DS_Store
-=======
->>>>>>> 0.7.0
