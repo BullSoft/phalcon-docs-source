@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+  <head>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>控制器 &mdash; Phalcon 0.5.0 文档</title>
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/configurationblock.css" type="text/css" />
+    <!--
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/layout.css" type="text/css" />
+    -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Rosario" type="text/css">
+    <!-- link rel="stylesheet" href="http://phalconphp.com/css/s.css" type="text/css" -->
+    <link rel="stylesheet" href="../static/s.css" type="text/css">
+    <link rel="stylesheet" href="../static/docs.css" type="text/css">
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.5.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/docs.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
+    <link rel="top" title="Phalcon 0.5.0 文档" href="../index.html" />
+    <link rel="next" title="模型" href="models.html" />
+    <link rel="prev" title="MVC架构" href="mvc.html" /> 
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <h1><a href="http://phalconphp.org/index" ><img border="0" src="../static/img/logo-small.png"></a></h1>
+        <div align="center">
+          <div id="nav-main" role="navigation">
+            <div class="menubar">
+              <div class="nav-main-features nav-first"><a href="http://bullsoft.org/phalcon-docs/">首页</a></div>
+              <div class="nav-main-features nav-first"><a href="http://phalconphp.com/download" target="_blank">下载</a></div>
+              <div class="nav-main-features"><a href="http://forum.phalconphp.com/">讨论</a></div>
+              <div class="nav-main-features"><a target="blog" href="http://blog.phalconphp.com/">博客</a></div>
+              <div class="nav-main-features nav-first"><a href="https://github.com/phalcon/cphalcon">GitHub</a></div>	      
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="related">
+      <ul>
+        <li class="right" >
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="models.html" title="模型"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="mvc.html" title="MVC架构"
+             accesskey="P">上一页</a> |</li>
+        <li><a href="http://phalconphp.org/index">首页</a> &raquo;</li>
+        <li><a href="../index.html">Phalcon 0.5.0 文档</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+      <table width="90%" align="center">
+        <tr>
+      <td class="primary-box" width="25%" valign="top">
+            
+            <div id="searchbox" style="">
+              <h3>搜索</h3>
+                <form class="search" action="http://readthedocs.org/search/project/" method="get">
+                  <input type="text" name="q" size="18">
+                  <input type="submit" value="Go">
+                  <input type="hidden" name="selected_facets" value="project:">
+                </form>
+            </div>
+            <h3><a href="../index.html">內容目录</a></h3>
+            <ul>
+<li><a class="reference internal" href="#">控制器</a><ul>
+<li><a class="reference internal" href="#id2">派遣环</a></li>
+<li><a class="reference internal" href="#id3">初始化控制器</a></li>
+<li><a class="reference internal" href="#id4">注入服务</a></li>
+<li><a class="reference internal" href="#id5">请求和响应</a></li>
+<li><a class="reference internal" href="#id8">会话数据</a></li>
+<li><a class="reference internal" href="#id9">控制器服务</a></li>
+<li><a class="reference internal" href="#id10">创建控制器基类</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>上一个主题</h4>
+            <p class="topless"><a href="mvc.html"
+                                  title="上一章">MVC架构</a></p>
+            <h4>下一个主题</h4>
+            <p class="topless"><a href="models.html"
+                                  title="下一章">模型</a></p>
+            <h3>本页</h3>
+            <ul class="this-page-menu">
+              <li><a href="../sources/reference/controllers.txt"
+                     rel="nofollow">显示源代码</a></li>
+            </ul>
+        </td>
+          <td class="second-box" valign="top">
+            <div class="document">
+                <div class="documentwrapper">
+                  <div class="bodywrapper">
+                <div class="body" >
+                      
+  <div class="section" id="id1">
+<h1>控制器<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<p>控制器包含很多方法，通常被称为动作。动作是控制中用于处理请求的方法。默认情况下，控制器中的每一个公共方法都对应一个动作，且可以通过URL访问它。动作负责解析请求并做出响应。通常来讲，响应是渲染后的视图，但也有可能是其他形式。</p>
+<p>The controllers provide a number of methods that are called actions. Actions are methods on a controller that handle requests. By default all public methods on a controller map to actions and are accessible by a URL. Actions are responsible for interpreting the request and creating the response. Usually responses are in the form of a rendered view, but there are other ways to create responses as well.</p>
+<p>例如，你访问URL: <a class="reference external" href="http://localhost/blog/posts/show/2012/the-post-title">http://localhost/blog/posts/show/2012/the-post-title</a> 。Phalcon默认会把该URL分解为以下几部分：</p>
+<p>For instance, when you access a URL like this: <a class="reference external" href="http://localhost/blog/posts/show/2012/the-post-title">http://localhost/blog/posts/show/2012/the-post-title</a> Phalcon by default will decompose each part like this:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="60%" />
+<col width="40%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>网站目录</strong></td>
+<td>blog</td>
+</tr>
+<tr class="row-even"><td><strong>控制器</strong></td>
+<td>posts</td>
+</tr>
+<tr class="row-odd"><td><strong>动作</strong></td>
+<td>show</td>
+</tr>
+<tr class="row-even"><td><strong>参数</strong></td>
+<td>2012</td>
+</tr>
+<tr class="row-odd"><td><strong>参数</strong></td>
+<td>the-post-title</td>
+</tr>
+</tbody>
+</table>
+<p>在本例中，PostsController 将会处理该请求。Phalcon不会要求你把控制器放在应用的某个特殊目录下，它们能够被 <a class="reference internal" href="loader.html"><em>类自动加载器</em></a> 加载，所以，你几乎可以随意放置你的控制器。</p>
+<p>In this case, the PostsController will handle this request. There is no a special location to put controllers in an application, they could be loaded using <a class="reference internal" href="loader.html"><em>autoloaders</em></a>, so you&#8217;re free to organize your controllers as you need.</p>
+<p>控制器名必须以&#8221;Controller&#8221;结尾，而动作必须以&#8221;Action&#8221;结尾。下面有一个控制器的示例：</p>
+<p>Controllers must have the suffix &#8220;Controller&#8221; while actions the suffix &#8220;Action&#8221;. A sample of a controller is as follows:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">PostsController</span> <span class="k">extends</span> <span class="nx">\Phalcon\Mvc\Controller</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">indexAction</span><span class="p">()</span>
+    <span class="p">{</span>
+
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">showAction</span><span class="p">(</span><span class="nv">$year</span><span class="p">,</span> <span class="nv">$postTitle</span><span class="p">)</span>
+    <span class="p">{</span>
+
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>URI中的其他参数会被定义为动作的参数，你可以轻易地使用本地变量访问他们。控制器可以继承 <a class="reference internal" href="../api/Phalcon_Mvc_Controller.html"><em>Phalcon\Mvc\Controller</em></a> 类，这不是必须的。但如果你这么做了，就可以在控制器中很容易地访问应用服务。</p>
+<p>Additional URI parameters are defined as action parameters, so that they can be easily accessed using local variables. A controller can optionally extend <a class="reference internal" href="../api/Phalcon_Mvc_Controller.html"><em>Phalcon\Mvc\Controller</em></a>. By doing this, the controller can have easy access to the application services.</p>
+<div class="section" id="id2">
+<h2>派遣环<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>派遣环会一直在派遣器中执行，直到没有任何动作需要执行为止。以上示例中只有一个动作被执行。现在，我们将使用&#8221;forward&#8221;在派遣环中完成更复杂的操作流程，把执行操作转发给另一个控制器/动作。</p>
+<p>The dispatch loop will be executed within the Dispatcher until there are no actions left to be executed. In the previous example only one action was executed. Now we&#8217;ll see how &#8220;forward&#8221; can provide a more complex flow of operation in the dispatch loop, by forwarding execution to a different controller/action.</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">PostsController</span> <span class="k">extends</span> <span class="nx">\Phalcon\Mvc\Controller</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">indexAction</span><span class="p">()</span>
+    <span class="p">{</span>
+
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">showAction</span><span class="p">(</span><span class="nv">$year</span><span class="p">,</span> <span class="nv">$postTitle</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">flash</span><span class="o">-&gt;</span><span class="na">error</span><span class="p">(</span><span class="s2">&quot;You don&#39;t have permission to access this area&quot;</span><span class="p">);</span>
+
+        <span class="c1">// Forward flow to another action</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">forward</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s2">&quot;controllers&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;users&quot;</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;signin&quot;</span><span class="p">));</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果用户没有权限访问某个动作，请求将会被转发给用户控制器的登录动作。</p>
+<p>If users don&#8217;t have permissions to access a certain action then will be forwarded to the Users controller, signin action.</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">UsersController</span> <span class="k">extends</span> <span class="nx">\Phalcon\Mvc\Controller</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">indexAction</span><span class="p">()</span>
+    <span class="p">{</span>
+
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">signinAction</span><span class="p">()</span>
+    <span class="p">{</span>
+
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这种&#8221;forwards&#8221;（译者注：转发）是没有限制的，但不能导致循环引用，否则你的应用程序将会在这里停止。如果派遣环中没有其他动作需要派遣的话，派遣器将会自动调用MVC的视图层（ <a class="reference internal" href="../api/Phalcon_Mvc_View.html"><em>Phalcon\Mvc\View</em></a> ）。</p>
+<p>There is no limit on the &#8220;forwards&#8221; you can have in your application, so long as they do not result in circular references, at which point your application will halt. If there are no other actions to be dispatched by the dispatch loop, the dispatcher will automatically invoke the view layer of the MVC which is managed by <a class="reference internal" href="../api/Phalcon_Mvc_View.html"><em>Phalcon\Mvc\View</em></a>.</p>
+</div>
+<div class="section" id="id3">
+<h2>初始化控制器<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p><a class="reference internal" href="../api/Phalcon_Mvc_Controller.html"><em>Phalcon\Mvc\Controller</em></a> 提供了初始化方法，它会在控制器的任何动作执行之前执行。值得注意的是，我们不建议大家在&#8221;__construct&#8221;方法（译者注：构造器）中执行控制器初始化。</p>
+<p><a class="reference internal" href="../api/Phalcon_Mvc_Controller.html"><em>Phalcon\Mvc\Controller</em></a> offers the initialize method, which is executed first, before any action is executed on a controller. The use of the &#8220;__construct&#8221; method is not recommended.</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">PostsController</span> <span class="k">extends</span> <span class="nx">\Phalcon\Mvc\Controller</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="nv">$settings</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">initialize</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">settings</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+            <span class="s2">&quot;mySetting&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;value&quot;</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">saveAction</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">settings</span><span class="p">[</span><span class="s2">&quot;mySetting&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">//...</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>注入服务<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>如果控制器继承自 <a class="reference internal" href="../api/Phalcon_Mvc_Controller.html"><em>Phalcon\Mvc\Controller</em></a> 类，它就能轻易地访问应用的服务容器。例如，如果我们注册了一个这样的服务：</p>
+<p>If a controller extends <a class="reference internal" href="../api/Phalcon_Mvc_Controller.html"><em>Phalcon\Mvc\Controller</em></a> then it have easy access to the service container in application. For example, if we have registered a service like this:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="nv">$di</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Phalcon\DI</span><span class="p">();</span>
+
+<span class="nv">$di</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;storage&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">(){</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Storage</span><span class="p">(</span><span class="s1">&#39;/some/directory&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>那么，我们可以以这种方式访问该服务：</p>
+<p>Then, we can access to that service by this way:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">FilesController</span> <span class="k">extends</span> <span class="nx">\Phalcon\Mvc\Controller</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">saveAction</span><span class="p">()</span>
+    <span class="p">{</span>
+
+        <span class="c1">//Injecting the service by just accessing the property with the same name</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">storage</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">(</span><span class="s1">&#39;/some/file&#39;</span><span class="p">);</span>
+
+        <span class="c1">//Accessing the service from the DI</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">di</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;storage&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">(</span><span class="s1">&#39;/some/file&#39;</span><span class="p">);</span>
+
+        <span class="c1">//Another way to access the service</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">di</span><span class="o">-&gt;</span><span class="na">getStorage</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">(</span><span class="s1">&#39;/some/file&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果你打算使用Phalcon的所有功能，你可以继续阅读框架提供的 <a class="reference internal" href="di.html"><em>默认</em></a> 。</p>
+<p>If you&#8217;re using Phalcon as a full-stack framework, you can read the services provided <a class="reference internal" href="di.html"><em>by default</em></a> in the framework.</p>
+</div>
+<div class="section" id="id5">
+<h2>请求和响应<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>假设框架提供了下面提到的所有注册服务。我们将阐释控制器如何与HTTP环境交互。&#8221;request&#8221;服务包含 <a class="reference internal" href="../api/Phalcon_Http_Request.html"><em>Phalcon\Http\Request</em></a> 类的一个实例，&#8221;response&#8221;服务包含 <a class="reference internal" href="../api/Phalcon_Http_Response.html"><em>Phalcon\Http\Response</em></a> 类的一个实例，代表将被发送到客户端的内容。</p>
+<p>Assuming that the registered services are provided by the framework. We explain how to interact with the HTTP environment. The &#8220;request&#8221; service contains an instance of <a class="reference internal" href="../api/Phalcon_Http_Request.html"><em>Phalcon\Http\Request</em></a> and the &#8220;response&#8221; contains a <a class="reference internal" href="../api/Phalcon_Http_Response.html"><em>Phalcon\Http\Response</em></a> representing what is going to be sent back to the client.</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">PostsController</span> <span class="k">extends</span> <span class="nx">Phalcon\Mvc\Controller</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">indexAction</span><span class="p">()</span>
+    <span class="p">{</span>
+
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">saveAction</span><span class="p">()</span>
+    <span class="p">{</span>
+
+        <span class="c1">// Check if request has made with POST</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">isPost</span><span class="p">()</span> <span class="o">==</span> <span class="k">true</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Access POST data</span>
+            <span class="nv">$customerName</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getPost</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">);</span>
+            <span class="nv">$customerBorn</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getPost</span><span class="p">(</span><span class="s2">&quot;born&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们一般不会直接使用响应对象，但它在动作执行之前就已经构建好了，有时候 - 如在派遣事件之后 - 直接访问响应对象是很有用的：</p>
+<p>The response object is not usually used directly, but is built up before the execution of the action, sometimes - like in an afterDispatch event - it can be useful to access the response directly:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">PostsController</span> <span class="k">extends</span> <span class="nx">Phalcon\Mvc\Controller</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">indexAction</span><span class="p">()</span>
+    <span class="p">{</span>
+
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">notFoundAction</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// Send a HTTP 404 response header</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">response</span><span class="o">-&gt;</span><span class="na">setStatusCode</span><span class="p">(</span><span class="mi">404</span><span class="p">,</span> <span class="s2">&quot;Not Found&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>要了解更多关于HTTP环境的细节，请猛击链接 <a class="reference external" href="request.html">请求</a> 和 <a class="reference external" href="response.html">响应</a> 。</p>
+<p>Learn more about the HTTP environment in their dedicated articles <a class="reference external" href="request.html">request</a> and <a class="reference external" href="response.html">response</a>.</p>
+</div>
+<div class="section" id="id8">
+<h2>会话数据<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<p>会话能帮助我们在请求之间保持持久性数据。你可以从任何控制器访问 <a class="reference internal" href="../api/Phalcon_Session_Bag.html"><em>Phalcon\Session\Bag</em></a> 类，保存需要持久的数据。</p>
+<p>Sessions help us maintain persistent data between requests. You could access a <a class="reference internal" href="../api/Phalcon_Session_Bag.html"><em>Phalcon\Session\Bag</em></a> from any controller to encapsulate data that need to be persistent.</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Phalcon\Mvc\Controller</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">indexAction</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">persistent</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">=</span> <span class="s2">&quot;Michael&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">welcomeAction</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">echo</span> <span class="s2">&quot;Welcome, &quot;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">persistent</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>控制器服务<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<p>有些服务可能就是控制器，我们可以始终通过服务容器来获取控制器类。从而让我们能以相同的名称注册其他类，以替代控制器类：</p>
+<p>Services may act as controllers, controllers classes are always requested from the services container. Accordingly, a controller can be easily replaced by any other class registered with its name:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="c1">//Register a controller as a service</span>
+<span class="nv">$di</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;IndexController&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$component</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Component</span><span class="p">();</span>
+    <span class="k">return</span> <span class="nv">$component</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h2>创建控制器基类<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h2>
+<p>应用程序的某些功能，如访问控制列表、语言本地化、缓存和模板引擎，在许多控制器中通常是相同的。这种情况下，我们鼓厉你创建“控制器基类”，以确保你的代码 <a class="reference external" href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> (译者注：Don&#8217;t Repeat Yourself)。控制器基类是一个继承自 <a class="reference internal" href="../api/Phalcon_Mvc_Controller.html"><em>Phalcon\Mvc\Controller</em></a> 类和封装所有控制器必须的通用功能的简单类。现在，你的控制器只需继承“控制器基类”就可以访问通用功能。</p>
+<p>Some application features like access control lists, translation, cache, and template engines are often common to many controllers. In cases like these the creation of a &#8220;base controller&#8221; is encouraged to ensure your code stays <a class="reference external" href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a>. A base controller is simply a class that extends the <a class="reference internal" href="../api/Phalcon_Mvc_Controller.html"><em>Phalcon\Mvc\Controller</em></a> and encapsulates the common functionality that all controllers must have. In turn, your controllers extend the &#8220;base controller&#8221; and have access to the common functionality.</p>
+<p>控制器基类可以放置在任何地方，但由于组织公约，我们建议你把它放在控制器目录下，如：apps/controllers/ControllerBase.php。我们也许会直接在引导程序中包含这个文件，又或者使用类自动加载器加载它。</p>
+<p>This class could be located anywhere, but for organizational conventions we recommend it to be in the controllers folder, e.g. apps/controllers/ControllerBase.php. We may require this file directly in the bootstrap file or cause to be loaded using any autoloader:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">require</span> <span class="s2">&quot;../app/controllers/ControllerBase.php&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>控制器基类实现了一些通用组件（动作，方法，属性等）：</p>
+<p>The implementation of common components (actions, methods, properties etc.) resides in this file:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">ControllerBase</span> <span class="k">extends</span> <span class="nx">\Phalcon\Mvc\Controller</span>
+<span class="p">{</span>
+
+  <span class="sd">/**</span>
+<span class="sd">   * This action is available for multiple controllers</span>
+<span class="sd">   */</span>
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">someAction</span><span class="p">()</span>
+  <span class="p">{</span>
+
+  <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>现在，所有其他控制器都继承自ControllerBase，自动获得通用组件（上面讨论的）：</p>
+<p>Any other controller now inherits from ControllerBase, automatically gaining access to the common components (discussed above):</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">UsersController</span> <span class="k">extends</span> <span class="nx">ControllerBase</span>
+<span class="p">{</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    <div class="related">
+      <ul>
+        <li class="right" >
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="models.html" title="模型"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="mvc.html" title="MVC架构"
+             >上一页</a> |</li> 
+      </ul>
+    </div>
+        <div id="disqus_thread" style="margin:30px auto 0 auto; width:80%;"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'phalcon'; // required: replace example with your forum shortname
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        <div id="footer">
+             &copy; 版权所有 2012, Phalcon Team.
+             最后更新日期是 Jul 09, 2013.
+            使用 <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2b1.
+        </div>
+
+    </div>
+  </body>
+</html>

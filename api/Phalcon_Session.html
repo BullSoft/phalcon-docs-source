@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+  <head>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Class Phalcon\Session &mdash; Phalcon 0.5.0 文档</title>
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/configurationblock.css" type="text/css" />
+    <!--
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/layout.css" type="text/css" />
+    -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Rosario" type="text/css">
+    <!-- link rel="stylesheet" href="http://phalconphp.com/css/s.css" type="text/css" -->
+    <link rel="stylesheet" href="../static/s.css" type="text/css">
+    <link rel="stylesheet" href="../static/docs.css" type="text/css">
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.5.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/docs.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
+    <link rel="top" title="Phalcon 0.5.0 文档" href="../index.html" />
+    <link rel="up" title="API Indice" href="index.html" />
+    <link rel="next" title="Class Phalcon\Session\Adapter\Files" href="Phalcon_Session_Adapter_Files.html" />
+    <link rel="prev" title="Class Phalcon\Paginator\Exception" href="Phalcon_Paginator_Exception.html" /> 
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <h1><a href="http://phalconphp.org/index" ><img border="0" src="../static/img/logo-small.png"></a></h1>
+        <div align="center">
+          <div id="nav-main" role="navigation">
+            <div class="menubar">
+              <div class="nav-main-features nav-first"><a href="http://bullsoft.org/phalcon-docs/">首页</a></div>
+              <div class="nav-main-features nav-first"><a href="http://phalconphp.com/download" target="_blank">下载</a></div>
+              <div class="nav-main-features"><a href="http://forum.phalconphp.com/">讨论</a></div>
+              <div class="nav-main-features"><a target="blog" href="http://blog.phalconphp.com/">博客</a></div>
+              <div class="nav-main-features nav-first"><a href="https://github.com/phalcon/cphalcon">GitHub</a></div>	      
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="related">
+      <ul>
+        <li class="right" >
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="Phalcon_Session_Adapter_Files.html" title="Class Phalcon\Session\Adapter\Files"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="Phalcon_Paginator_Exception.html" title="Class Phalcon\Paginator\Exception"
+             accesskey="P">上一页</a> |</li>
+        <li><a href="http://phalconphp.org/index">首页</a> &raquo;</li>
+        <li><a href="../index.html">Phalcon 0.5.0 文档</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">API Indice</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+      <table width="90%" align="center">
+        <tr>
+      <td class="primary-box" width="25%" valign="top">
+            
+            <div id="searchbox" style="">
+              <h3>搜索</h3>
+                <form class="search" action="http://readthedocs.org/search/project/" method="get">
+                  <input type="text" name="q" size="18">
+                  <input type="submit" value="Go">
+                  <input type="hidden" name="selected_facets" value="project:">
+                </form>
+            </div>
+            <h3><a href="../index.html">內容目录</a></h3>
+            <ul>
+<li><a class="reference internal" href="#">Class <strong>Phalcon\Session</strong></a><ul>
+<li><a class="reference internal" href="#methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>上一个主题</h4>
+            <p class="topless"><a href="Phalcon_Paginator_Exception.html"
+                                  title="上一章">Class <strong>Phalcon\Paginator\Exception</strong></a></p>
+            <h4>下一个主题</h4>
+            <p class="topless"><a href="Phalcon_Session_Adapter_Files.html"
+                                  title="下一章">Class <strong>Phalcon\Session\Adapter\Files</strong></a></p>
+            <h3>本页</h3>
+            <ul class="this-page-menu">
+              <li><a href="../sources/api/Phalcon_Session.txt"
+                     rel="nofollow">显示源代码</a></li>
+            </ul>
+        </td>
+          <td class="second-box" valign="top">
+            <div class="document">
+                <div class="documentwrapper">
+                  <div class="bodywrapper">
+                <div class="body" >
+                      
+  <div class="section" id="class-phalcon-session">
+<h1>Class <strong>Phalcon\Session</strong><a class="headerlink" href="#class-phalcon-session" title="永久链接至标题">¶</a></h1>
+<p>Session client-server persistent state data management. This component allows you to separate your session data between application or modules. With this, it&#8217;s possible to use the same index to refer a variable but they can be in different applications.</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+ <span class="nv">$session</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Phalcon\Session\Adapter\Files</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;uniqueId&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;my-private-app&#39;</span>
+ <span class="p">));</span>
+
+ <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">start</span><span class="p">();</span>
+
+ <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;var&#39;</span><span class="p">,</span> <span class="s1">&#39;some-value&#39;</span><span class="p">);</span>
+
+ <span class="k">echo</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;var&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="永久链接至标题">¶</a></h2>
+<p>public  <strong>__construct</strong> (<em>array</em> $options)</p>
+<p>Phalcon\Session construtor</p>
+<p>public  <strong>start</strong> ()</p>
+<p>Starts session, optionally using an adapter</p>
+<p>public  <strong>setOptions</strong> (<em>array</em> $options)</p>
+<p>Sets session options</p>
+<p>public <em>array</em>  <strong>getOptions</strong> ()</p>
+<p>Get internal options</p>
+<p>public  <strong>get</strong> (<em>string</em> $index)</p>
+<p>Gets a session variable from an application context</p>
+<p>public  <strong>set</strong> (<em>string</em> $index, <em>string</em> $value)</p>
+<p>Sets a session variable in an application context</p>
+<p>public  <strong>has</strong> (<em>string</em> $index)</p>
+<p>Check whether a session variable is set in an application context</p>
+<p>public  <strong>remove</strong> (<em>string</em> $index)</p>
+<p>Removes a session variable from an application context</p>
+<p>public <em>string</em>  <strong>getId</strong> ()</p>
+<p>Returns active session id</p>
+<p>public <em>boolean</em>  <strong>isStarted</strong> ()</p>
+<p>Check whether the session has been started</p>
+<p>public <em>boolean</em>  <strong>destroy</strong> ()</p>
+<p>Destroys the active session</p>
+</div>
+</div>
+
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    <div class="related">
+      <ul>
+        <li class="right" >
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="Phalcon_Session_Adapter_Files.html" title="Class Phalcon\Session\Adapter\Files"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="Phalcon_Paginator_Exception.html" title="Class Phalcon\Paginator\Exception"
+             >上一页</a> |</li>
+          <li><a href="index.html" >API Indice</a> &raquo;</li> 
+      </ul>
+    </div>
+        <div id="disqus_thread" style="margin:30px auto 0 auto; width:80%;"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'phalcon'; // required: replace example with your forum shortname
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        <div id="footer">
+             &copy; 版权所有 2012, Phalcon Team.
+             最后更新日期是 Jul 09, 2013.
+            使用 <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2b1.
+        </div>
+
+    </div>
+  </body>
+</html>

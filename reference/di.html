@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+  <head>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>使用依赖注入 &mdash; Phalcon 0.5.0 文档</title>
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/configurationblock.css" type="text/css" />
+    <!--
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/layout.css" type="text/css" />
+    -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Rosario" type="text/css">
+    <!-- link rel="stylesheet" href="http://phalconphp.com/css/s.css" type="text/css" -->
+    <link rel="stylesheet" href="../static/s.css" type="text/css">
+    <link rel="stylesheet" href="../static/docs.css" type="text/css">
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.5.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/docs.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
+    <link rel="top" title="Phalcon 0.5.0 文档" href="../index.html" />
+    <link rel="next" title="MVC架构" href="mvc.html" />
+    <link rel="prev" title="教程三：创建简单的REST API" href="tutorial-rest.html" /> 
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <h1><a href="http://phalconphp.org/index" ><img border="0" src="../static/img/logo-small.png"></a></h1>
+        <div align="center">
+          <div id="nav-main" role="navigation">
+            <div class="menubar">
+              <div class="nav-main-features nav-first"><a href="http://bullsoft.org/phalcon-docs/">首页</a></div>
+              <div class="nav-main-features nav-first"><a href="http://phalconphp.com/download" target="_blank">下载</a></div>
+              <div class="nav-main-features"><a href="http://forum.phalconphp.com/">讨论</a></div>
+              <div class="nav-main-features"><a target="blog" href="http://blog.phalconphp.com/">博客</a></div>
+              <div class="nav-main-features nav-first"><a href="https://github.com/phalcon/cphalcon">GitHub</a></div>	      
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="related">
+      <ul>
+        <li class="right" >
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="mvc.html" title="MVC架构"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="tutorial-rest.html" title="教程三：创建简单的REST API"
+             accesskey="P">上一页</a> |</li>
+        <li><a href="http://phalconphp.org/index">首页</a> &raquo;</li>
+        <li><a href="../index.html">Phalcon 0.5.0 文档</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+      <table width="90%" align="center">
+        <tr>
+      <td class="primary-box" width="25%" valign="top">
+            
+            <div id="searchbox" style="">
+              <h3>搜索</h3>
+                <form class="search" action="http://readthedocs.org/search/project/" method="get">
+                  <input type="text" name="q" size="18">
+                  <input type="submit" value="Go">
+                  <input type="hidden" name="selected_facets" value="project:">
+                </form>
+            </div>
+            <h3><a href="../index.html">內容目录</a></h3>
+            <ul>
+<li><a class="reference internal" href="#">使用依赖注入</a><ul>
+<li><a class="reference internal" href="#id2">我们的方法</a></li>
+<li><a class="reference internal" href="#id3">在容器中注册服务</a></li>
+<li><a class="reference internal" href="#di">工厂默认DI</a></li>
+<li><a class="reference internal" href="#id4">服务名称约定</a></li>
+<li><a class="reference internal" href="#id5">通过服务容器实例化类</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>上一个主题</h4>
+            <p class="topless"><a href="tutorial-rest.html"
+                                  title="上一章">教程三：创建简单的REST API</a></p>
+            <h4>下一个主题</h4>
+            <p class="topless"><a href="mvc.html"
+                                  title="下一章">MVC架构</a></p>
+            <h3>本页</h3>
+            <ul class="this-page-menu">
+              <li><a href="../sources/reference/di.txt"
+                     rel="nofollow">显示源代码</a></li>
+            </ul>
+        </td>
+          <td class="second-box" valign="top">
+            <div class="document">
+                <div class="documentwrapper">
+                  <div class="bodywrapper">
+                <div class="body" >
+                      
+  <div class="section" id="id1">
+<h1>使用依赖注入<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<p>下面这个示例显得有点冗余，但它解释了我们为什么要使用服务容器和依赖注入。首先，假设我们正在开发一个名为SomeComponent的组件。此时，组件完成什么任务并不重要，重要的是组件在连接数据库时有一些外部依赖。</p>
+<p>The following example is a bit lengthy, but explains why using a service container and dependency injection. To begin with, let&#8217;s pretend we are developing a component called SomeComponent. This performs a task that is not important right now. Our component have some dependency that is a connection to a database.</p>
+<p>在第一个示例中，我们在组件中创建数据库连接。这么做是不切实际的，我们既不能改变连接参数，也不能改变数据库系统，因为这些早已写死在组件里了。</p>
+<p>In this first example, the connection is created inside the component. This approach is impractical, practically we can not change the connection parameters or the type of database system because the component only works as created.</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">SomeComponent</span>
+<span class="p">{</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * The instantiation of the connection is hardcoded inside</span>
+<span class="sd">     * the component so is difficult to replace it externally</span>
+<span class="sd">     * or change its behavior</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">someDbTask</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$connection</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Connection</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+            <span class="s2">&quot;host&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;username&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;secret&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dbname&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;invo&quot;</span>
+        <span class="p">));</span>
+
+        <span class="c1">// ...</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="nv">$some</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SomeComponent</span><span class="p">();</span>
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">someDbTask</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>为了解决这个问题，我们创建了一个setter，在使用数据库之前从外部注入这个依赖。仅从现在来看，这似乎是一个好的解决方案：</p>
+<p>To solve this we create a setter that injects the dependency externally before use it. For now, this seems to be a good solution:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">SomeComponent</span>
+<span class="p">{</span>
+
+    <span class="k">protected</span> <span class="nv">$_connection</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Sets the connection externally</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">setConnection</span><span class="p">(</span><span class="nv">$connection</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_connection</span> <span class="o">=</span> <span class="nv">$connection</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">someDbTask</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$connection</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_connection</span><span class="p">;</span>
+
+        <span class="c1">// ...</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="nv">$some</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SomeComponent</span><span class="p">();</span>
+
+<span class="c1">//Create the connection</span>
+<span class="nv">$connection</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Connection</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+    <span class="s2">&quot;host&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;username&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;password&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;secret&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dbname&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;invo&quot;</span>
+<span class="p">));</span>
+
+<span class="c1">//Inject the connection in the component</span>
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">setConnection</span><span class="p">(</span><span class="nv">$connection</span><span class="p">);</span>
+
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">someDbTask</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>现在考虑一下，如果要在应用的不同地方使用该组件，那么我们每次都需要创建这个数据库连接，然后把它传递给组件。全局注册表可以解决这个问题，我们可以在注册表中维持一个数据库连接实例，之后就不用反复创建它了。</p>
+<p>Now consider that we use this component in different parts of the application, then we will need to create the connection several times before pass it to the component. This could be solved by using some kind of global registry where we obtain the connection instance and not have to create it again and again.</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">Registry</span>
+<span class="p">{</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Returns the connection</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getConnection</span><span class="p">()</span>
+    <span class="p">{</span>
+       <span class="k">return</span> <span class="k">new</span> <span class="nx">Connection</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+            <span class="s2">&quot;host&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;username&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;secret&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dbname&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;invo&quot;</span>
+        <span class="p">));</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">SomeComponent</span>
+<span class="p">{</span>
+
+    <span class="k">protected</span> <span class="nv">$_connection</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Sets the connection externally</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">setConnection</span><span class="p">(</span><span class="nv">$connection</span><span class="p">){</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_connection</span> <span class="o">=</span> <span class="nv">$connection</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">someDbTask</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$connection</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_connection</span><span class="p">;</span>
+
+        <span class="c1">// ...</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="nv">$some</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SomeComponent</span><span class="p">();</span>
+
+<span class="c1">//Pass the connection defined in the registry</span>
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">setConnection</span><span class="p">(</span><span class="nx">Registry</span><span class="o">::</span><span class="na">getConnection</span><span class="p">());</span>
+
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">someDbTask</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>现在想象一下，我们必须在组件内实现两个方法，第一个方法用于创建新的数据库连接，第二个方法使用共享的数据库连接：</p>
+<p>Now, let&#8217;s imagine that we must to implement two methods in the component, the first always need to create a new connection and the second always need to use a shared connection:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">Registry</span>
+<span class="p">{</span>
+
+    <span class="k">protected</span> <span class="k">static</span> <span class="nv">$_connection</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Creates a connection</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">_createConnection</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Connection</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+            <span class="s2">&quot;host&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;username&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;secret&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dbname&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;invo&quot;</span>
+        <span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Creates a connection only once and returns it</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getSharedConnection</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">self</span><span class="o">::</span><span class="nv">$_connection</span><span class="o">===</span><span class="k">null</span><span class="p">){</span>
+            <span class="nv">$connection</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">_createConnection</span><span class="p">();</span>
+            <span class="nx">self</span><span class="o">::</span><span class="nv">$_connection</span> <span class="o">=</span> <span class="nv">$connection</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">self</span><span class="o">::</span><span class="nv">$_connection</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Always returns a new connection</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getNewConnection</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">self</span><span class="o">::</span><span class="na">_createConnection</span><span class="p">();</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">SomeComponent</span>
+<span class="p">{</span>
+
+    <span class="k">protected</span> <span class="nv">$_connection</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Sets the connection externally</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">setConnection</span><span class="p">(</span><span class="nv">$connection</span><span class="p">){</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_connection</span> <span class="o">=</span> <span class="nv">$connection</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * This method always needs the shared connection</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">someDbTask</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$connection</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_connection</span><span class="p">;</span>
+
+        <span class="c1">// ...</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * This method always needs a new connection</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">someOtherDbTask</span><span class="p">(</span><span class="nv">$connection</span><span class="p">)</span>
+    <span class="p">{</span>
+
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="nv">$some</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SomeComponent</span><span class="p">();</span>
+
+<span class="c1">//This injects the shared connection</span>
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">setConnection</span><span class="p">(</span><span class="nx">Registry</span><span class="o">::</span><span class="na">getSharedConnection</span><span class="p">());</span>
+
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">someDbTask</span><span class="p">();</span>
+
+<span class="c1">//Here, we always pass a new connection as parameter</span>
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">someOtherDbTask</span><span class="p">(</span><span class="nx">Registry</span><span class="o">::</span><span class="na">getConnection</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>目前为止，我们已经见识到依赖注入是如何解决问题的。通过参数传递依赖，而不是在代码里面创建依赖，这么做可以让应用的各部分充分解耦，而且代码可维护性更高。</p>
+<p>So far we have seen how dependency injection solved our problems. Passing dependencies as arguments instead of creating them internally in the code makes our application more maintainable and decoupled. However to long term, this form of dependency injection have some disadvantages.</p>
+<p>如果该组件有很多依赖，我们要创建很多setter来传递依赖，或通过创建构造器通过参数传递，每次使用组件时都要额外创建依赖，使得代码不像预期的那样可维护：</p>
+<p>For instance, if the component has many dependencies, we will need to create multiple setter arguments to pass the dependencies or create a constructor that pass them with many arguments, additionally create dependencies before use the component, every time, makes our code not maintainable as we would like:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="c1">//Create the dependencies or retrieve them from the registry</span>
+<span class="nv">$connection</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Connection</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Session</span><span class="p">();</span>
+<span class="nv">$fileSystem</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FileSystem</span><span class="p">();</span>
+<span class="nv">$filter</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Filter</span><span class="p">();</span>
+<span class="nv">$selector</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Selector</span><span class="p">();</span>
+
+<span class="c1">//Pass them as constructor parameters</span>
+<span class="nv">$some</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SomeComponent</span><span class="p">(</span><span class="nv">$connection</span><span class="p">,</span> <span class="nv">$session</span><span class="p">,</span> <span class="nv">$fileSystem</span><span class="p">,</span> <span class="nv">$filter</span><span class="p">,</span> <span class="nv">$selector</span><span class="p">);</span>
+
+<span class="c1">// ... or using setters</span>
+
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">setConnection</span><span class="p">(</span><span class="nv">$connection</span><span class="p">);</span>
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">setSession</span><span class="p">(</span><span class="nv">$session</span><span class="p">);</span>
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">setFileSystem</span><span class="p">(</span><span class="nv">$fileSystem</span><span class="p">);</span>
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">setFilter</span><span class="p">(</span><span class="nv">$filter</span><span class="p">);</span>
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">setSelector</span><span class="p">(</span><span class="nv">$selector</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>想想我们不得不在应用的许多地方创建这些对象。如果不再需要某些依赖，我们不得不找到每个注入该依赖的setter或构造器，并进行逐个修改删除。为了解决这个问题，我们使用全局注册表创建组件。但是，在创建对象之前，它新增了一个抽象层：</p>
+<p>Think we had to create this object in many parts of our application. If you ever do not require any of the dependencies, we need to go everywhere to remove the parameter in the constructor or the setter where we injected the code. To solve this we return again to a global registry to create the component. However, it adds a new layer of abstraction before creating the object:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">SomeComponent</span>
+<span class="p">{</span>
+
+    <span class="c1">// ...</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Define a factory method to create SomeComponent instances injecting its dependencies</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">factory</span><span class="p">()</span>
+    <span class="p">{</span>
+
+        <span class="nv">$connection</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Connection</span><span class="p">();</span>
+        <span class="nv">$session</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Session</span><span class="p">();</span>
+        <span class="nv">$fileSystem</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FileSystem</span><span class="p">();</span>
+        <span class="nv">$filter</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Filter</span><span class="p">();</span>
+        <span class="nv">$selector</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Selector</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">self</span><span class="p">(</span><span class="nv">$connection</span><span class="p">,</span> <span class="nv">$session</span><span class="p">,</span> <span class="nv">$fileSystem</span><span class="p">,</span> <span class="nv">$filter</span><span class="p">,</span> <span class="nv">$selector</span><span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这一刻，我们仿佛回到了开始的地方，我们又在组件内构建依赖！每一次我们继续寻找方法来解决这个问题。但似乎又会走向黑暗的深渊（糟糕的实践）。</p>
+<p>One moment, we returned back to the beginning, we are building again the dependencies inside the component! We can move on and find out a way to solve this problem every time. But it seems that time and again we fall back into bad practices.</p>
+<p>能找到一种实用又优雅的方式来解决这个问题吗？当然有，答案就是依赖容器。容器扮演全局注册表的角色。依赖容器就像一座桥梁一样帮助我们获得依赖，极大地减小了我们组件的复杂度：</p>
+<p>A practical and elegant way to solve these problems is to use a container for dependencies. The containers act as the global registry that we saw earlier. Using the container for dependencies as a bridge to obtain the dependencies allows us to reduce the complexity of our component:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">SomeComponent</span>
+<span class="p">{</span>
+
+    <span class="k">protected</span> <span class="nv">$_di</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$di</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_di</span> <span class="o">=</span> <span class="nv">$di</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">someDbTask</span><span class="p">()</span>
+    <span class="p">{</span>
+
+        <span class="c1">// Get the connection service</span>
+        <span class="c1">// Always returns a new connection</span>
+        <span class="nv">$connection</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_di</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;db&#39;</span><span class="p">);</span>
+
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">someOtherDbTask</span><span class="p">()</span>
+    <span class="p">{</span>
+
+        <span class="c1">// Get a shared connection service,</span>
+        <span class="c1">// this will return the same connection everytime</span>
+        <span class="nv">$connection</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_di</span><span class="o">-&gt;</span><span class="na">getShared</span><span class="p">(</span><span class="s1">&#39;db&#39;</span><span class="p">);</span>
+
+        <span class="c1">//This method also requires a input filtering service</span>
+        <span class="nv">$filter</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_db</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;filter&#39;</span><span class="p">);</span>
+
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="nv">$di</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Phalcon\DI</span><span class="p">();</span>
+
+<span class="c1">//Register a &quot;db&quot; service in the container</span>
+<span class="nv">$di</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;db&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">(){</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Connection</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+        <span class="s2">&quot;host&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;username&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;password&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;secret&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dbname&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;invo&quot;</span>
+    <span class="p">));</span>
+<span class="p">});</span>
+
+<span class="c1">//Register a &quot;filter&quot; service in the container</span>
+<span class="nv">$di</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">(){</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Filter</span><span class="p">();</span>
+<span class="p">});</span>
+
+<span class="c1">//Register a &quot;session&quot; service in the container</span>
+<span class="nv">$di</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;session&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">(){</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Session</span><span class="p">();</span>
+<span class="p">});</span>
+
+<span class="c1">//Pass the service container as unique parameter</span>
+<span class="nv">$some</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SomeComponent</span><span class="p">(</span><span class="nv">$di</span><span class="p">);</span>
+
+<span class="nv">$some</span><span class="o">-&gt;</span><span class="na">someTask</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>现在，组件便能在需要时轻易访问它所依赖的服务了。如果它不依赖某个服务，该服务甚至都不会初始化，这能极大节省资源。现在组件已经高解耦了。例如，我们可以更改数据库连接的创建方式，它们的行为或其他方面的改变，不会对给件造成任何影响。</p>
+<p>The component now simply access the service it require when it needs it, if it does not requires a service, that is not even initialized saving resources. The component is now highly decoupled. For example, we can replace the manner in which connections are created, their behavior or any other aspect of them and that would not affect the component.</p>
+<div class="section" id="id2">
+<h2>我们的方法<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>Phalcon\DI 是实现依赖注入服务的一个给件，它本身就是一个容器。</p>
+<p>Phalcon\DI is a component that implements Dependency Injection of services and it&#8217;s itself a container for them.</p>
+<p>由于Phalcon是高度解耦的，Phalcon\DI 是集成框架不同组件必不可少的。开发者也能在应用中使用该组件注入依赖，管理不同类的全局实例。</p>
+<p>Since Phalcon is highly decoupled, Phalcon\DI is essential to integrate the different components of the framework. The developer can also use this component to inject dependencies and manage global instances of the different classes used in the application.</p>
+<p>基本上，该组件实现了 <a class="reference external" href="http://en.wikipedia.org/wiki/Inversion_of_control">控制反转</a> 模式。使用依赖注入，对象不再使用setter或构造器接收依赖了，而是向依赖注入容器请求服务。这减小了整体复杂度，因为现在在组件中我们只有一种途径获取依赖关系。</p>
+<p>Basically, this component implements the <a class="reference external" href="http://en.wikipedia.org/wiki/Inversion_of_control">Inversion of Control</a> pattern. Applying this, the objects do not receive their dependencies using setters or constructors, but requesting a service dependency injector. This reduces the overall complexity, since there is only one way to get the required dependencies within a component.</p>
+<p>另外，这种模式增加了代码的可测试性，从而使其不易出错。</p>
+<p>Additionally, this pattern increases testability in the code, thus making it less prone to errors.</p>
+</div>
+<div class="section" id="id3">
+<h2>在容器中注册服务<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>服务既可以是框架注册的，也可以是开发者注册的。当组件A依赖于组件B（或其实例）时，它可以从容器中请求组件B，而不是创建组件B的新实例。</p>
+<p>Services can be registered by the framework itself or the developer. When a component A requires component B (or an instance of its class) to operate, it can request component B from the container, rather than creating a new instance component B.</p>
+<p>这么做给我们带来很多好处：</p>
+<p>This way of working gives us many advantages:</p>
+<ul class="simple">
+<li>我们可以使用自己或第三方的组件代替当前组件。</li>
+<li>我们可以完全控制对象初始化，在传递给组件之前，我们可以随心所欲设置对象。</li>
+<li>我们可以用结构化和统一的方式获取组件的全局实例。</li>
+<li>We can replace a component by one created by ourselves or a third party one easily.</li>
+<li>We have full control of the object initialization, allowing us to set this objects as you need before delivery them to components.</li>
+<li>We can get global instances of components in a structured and unified way</li>
+</ul>
+<p>注册服务的方式不只一种：</p>
+<p>Services can be registered in several ways:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+    <span class="c1">//Create the Dependency Injector Container</span>
+    <span class="nv">$di</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Phalcon\DI</span><span class="p">();</span>
+
+    <span class="c1">//By its class name</span>
+    <span class="nv">$di</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="s1">&#39;Phalcon\Http\Request&#39;</span><span class="p">);</span>
+
+    <span class="c1">//Using an anonymous function, the instance will lazy loaded</span>
+    <span class="nv">$di</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="k">function</span><span class="p">(){</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Phalcon\Http\Request</span><span class="p">();</span>
+    <span class="p">});</span>
+
+    <span class="c1">//Registering directly an instance</span>
+    <span class="nv">$di</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Phalcon\Http\Request</span><span class="p">());</span>
+
+    <span class="c1">//Using an array definition</span>
+    <span class="nv">$di</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s2">&quot;className&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Phalcon\Http\Request&#39;</span>
+    <span class="p">));</span>
+</pre></div>
+</div>
+<p>在上面的示例中，当框架要获取（用户）请求数据时，它将会向容器请求&#8217;request&#8217;服务。反过来，容器将会返回所请求服务的一个实例。开发者在需要时可以替换这个组件。</p>
+<p>In the above example, when the framework needs to access the request data, it will ask for the service identified as ‘request’ in the container. The container in turn will return an instance of the required service. A developer might eventually replace a component when he/she needs.</p>
+<p>上面列出来的每种方法都可以设置或注册服务，但它们各有优缺点。具体使用哪种方法取决于开发者和实际需求。</p>
+<p>Each of the methods (demonstrated in the above example) used to set/register a service has advantages and disadvantages. It is up to the developer and the particular requirements that will designate which one is used.</p>
+<p>通过字符串设置服务是最简单的，但也最缺乏灵活性。通过数组设置服务提供了更多的灵活性，但使得代码看复杂。匿名函数在前两种方法上寻得一个平衡，不仅如此，使用它比我们预期的更具维护性。</p>
+<p>Setting a service by a string is simple but lacks flexibility. Setting services using an array offers a lot more flexibility but makes the code more complicated. The lambda function is a good balance between the two but could lead to more maintenance than one would expect.</p>
+<p>Phalcon\DI 为它存储的每个服务提供延迟加载功能。除非开发者选择直接实例化对象然后再存储在容器中，任何通过数组、字符串等方式存储的对象都会被延迟加载，也即当被请求时才会被实例化。</p>
+<p>Phalcon\DI offers lazy loading for every service it stores. Unless the developer chooses to instantiate an object directly and store it in the container, any object stored in it (via array, string etc.) will be lazy loaded i.e. instantiated only when requested.</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="c1">//Register a service &quot;db&quot; with a class name and its parameters</span>
+<span class="nv">$di</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s2">&quot;db&quot;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s2">&quot;className&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;Phalcon\Db\Adapter\Pdo\Mysql&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parameters&quot;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+          <span class="s2">&quot;parameter&quot;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+               <span class="s2">&quot;host&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;username&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;password&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;secret&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;dbname&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;blog&quot;</span>
+          <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">));</span>
+
+<span class="c1">//Using an anonymous function</span>
+<span class="nv">$di</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s2">&quot;db&quot;</span><span class="p">,</span> <span class="k">function</span><span class="p">(){</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Phalcon\Db\Adapter\Pdo\Mysql</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+         <span class="s2">&quot;host&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;username&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;password&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;secret&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;dbname&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;blog&quot;</span>
+    <span class="p">));</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>上面两种服务注册产生的结果是一样的。但是如果有必要的话，数组定义允许修改服务参数：</p>
+<p>Both service registrations above produce the same result. The array definition however, allows for alteration of the service parameters if needed:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="nv">$di</span><span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s2">&quot;db&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s2">&quot;host&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;username&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;password&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;secret&quot;</span>
+<span class="p">));</span>
+</pre></div>
+</div>
+<p>从容器中获得服务只需简单地调用&#8221;get&#8221;方法。一个新的服务实例将会被返回：</p>
+<p>Obtaining a service from the container is a matter of simply calling the “get” method. A new instance of the service will be returned:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span> <span class="nv">$request</span> <span class="o">=</span> <span class="nv">$di</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>又或者通过魔术方法调用：</p>
+<p>Or by calling through the magic method:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="nv">$request</span> <span class="o">=</span> <span class="nv">$di</span><span class="o">-&gt;</span><span class="na">getRequest</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Phalcon\DI 还允许服务重用。如果要获取之前已经实例化的服务，可以使用getShared()方法。 特别是上面提到的 Phaclon\Http\Request 服务：</p>
+<p>Phalcon\DI also allows for services to be reusable. To get a service previously instantiated the getShared() method can be used. Specifically for the Phalcon\Http\Request example shown above:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="nv">$request</span> <span class="o">=</span> <span class="nv">$di</span><span class="o">-&gt;</span><span class="na">getShared</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>在&#8221;get&#8221;方法中添加数组参数，可以把参数传递给类构造器：</p>
+<p>Arguments can be passed to the constructor by adding an array parameter to the method &#8220;get&#8221;:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="nv">$component</span> <span class="o">=</span> <span class="nv">$di</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s2">&quot;MyComponent&quot;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s2">&quot;some-parameter&quot;</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="di">
+<h2>工厂默认DI<a class="headerlink" href="#di" title="永久链接至标题">¶</a></h2>
+<p>尽管Phalcon的高解耦特性给我们提供了很大的自由度和灵活性，也许我们只想简单地把它当作一个全功能框架。为了实现这一目标，框架提供了 Phalcon\DI 的一个变种，叫 Phaclon\DI\FactoryDefault。这个类会自动地注册框架的相应服务，从而使其成为全功能框架。</p>
+<p>Although the decoupled character of Phalcon offers us great freedom and flexibility, maybe we just simply want to use it as a full-stack framework. To achieve this, the framework provides a variant of Phalcon\DI called Phalcon\DI\FactoryDefault. This class automatically registers the appropriate services bundled with the framework to act as full-stack.</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span> <span class="nv">$di</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Phalcon\DI\FactoryDefault</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>服务名称约定<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>尽管你可以用你想要的名称注册服务。 Phaclon 有一系列服务名称约定，好让你在需要它们的时候能获取正确的服务。</p>
+<p>Although you can register services with the names you want. Phalcon has a seriers of service naming conventions that allow it to get the right services when you need it requires them.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="30%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Service Name</th>
+<th class="head">Description</th>
+<th class="head">Default</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>dispatcher</td>
+<td>Controllers Dispatching Service</td>
+<td><a class="reference internal" href="../api/Phalcon_Mvc_Dispatcher.html"><em>Phalcon\Mvc\Dispatcher</em></a></td>
+</tr>
+<tr class="row-odd"><td>router</td>
+<td>Routing Service</td>
+<td><a class="reference internal" href="../api/Phalcon_Mvc_Router.html"><em>Phalcon\Mvc\Router</em></a></td>
+</tr>
+<tr class="row-even"><td>url</td>
+<td>URL Generator Service</td>
+<td><a class="reference internal" href="../api/Phalcon_Mvc_Url.html"><em>Phalcon\Mvc\Url</em></a></td>
+</tr>
+<tr class="row-odd"><td>request</td>
+<td>HTTP Request Environment Service</td>
+<td><a class="reference internal" href="../api/Phalcon_Http_Request.html"><em>Phalcon\Http\Request</em></a></td>
+</tr>
+<tr class="row-even"><td>response</td>
+<td>HTTP Response Environment Service</td>
+<td><a class="reference internal" href="../api/Phalcon_Http_Response.html"><em>Phalcon\Http\Response</em></a></td>
+</tr>
+<tr class="row-odd"><td>filter</td>
+<td>Input Filtering Service</td>
+<td><a class="reference internal" href="../api/Phalcon_Filter.html"><em>Phalcon\Filter</em></a></td>
+</tr>
+<tr class="row-even"><td>flash</td>
+<td>Flash Messaging Service</td>
+<td><a class="reference internal" href="../api/Phalcon_Flash_Direct.html"><em>Phalcon\Flash\Direct</em></a></td>
+</tr>
+<tr class="row-odd"><td>session</td>
+<td>Session Service</td>
+<td><a class="reference internal" href="../api/Phalcon_Session_Adapter_Files.html"><em>Phalcon\Session\Adapter\Files</em></a></td>
+</tr>
+<tr class="row-even"><td>eventsManager</td>
+<td>Events Management Service</td>
+<td><a class="reference internal" href="../api/Phalcon_Events_Manager.html"><em>Phalcon\Events\Manager</em></a></td>
+</tr>
+<tr class="row-odd"><td>db</td>
+<td>Low-Level Database Connection Service</td>
+<td><a class="reference internal" href="../api/Phalcon_Db.html"><em>Phalcon\Db</em></a></td>
+</tr>
+<tr class="row-even"><td>modelsManager</td>
+<td>Models Management Service</td>
+<td><a class="reference internal" href="../api/Phalcon_Mvc_Model_Manager.html"><em>Phalcon\Mvc\Model\Manager</em></a></td>
+</tr>
+<tr class="row-odd"><td>modelsMetadata</td>
+<td>Models Meta-Data Service</td>
+<td><a class="reference internal" href="../api/Phalcon_Mvc_Model_MetaData_Memory.html"><em>Phalcon\Mvc\Model\MetaData\Memory</em></a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id5">
+<h2>通过服务容器实例化类<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>当你向服务容器请求服务时，如果它无法找到该服务，它会尝试加载相同名称的类。通过这种行为，我们可以通过简单地注册一个相同名称的服务来取代任何类：</p>
+<p>When you request a service to the services container, if it can&#8217;t find out a service with the same name it&#8217;ll try to load a class with the same name. With this behavior we can replace any class by another simply by registering a service with its name:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+
+<span class="c1">//Register a controller as a service</span>
+<span class="nv">$di</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;IndexController&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$component</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Component</span><span class="p">();</span>
+    <span class="k">return</span> <span class="nv">$component</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="c1">//Register a controller as a service</span>
+<span class="nv">$di</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;MyOtherComponent&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//Actually returns another component</span>
+    <span class="nv">$component</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AnotherComponent</span><span class="p">();</span>
+    <span class="k">return</span> <span class="nv">$component</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="c1">//Create a instance via the services container</span>
+<span class="nv">$myComponent</span> <span class="o">=</span> <span class="nv">$di</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;MyOtherComponent&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>我们可以利用这一点，总是通过服务容器实例化类，即使你没有把它们注册为服务。DI 将会退化为一个类自动加载器，并最终加载该类。</p>
+<p>You can take advantage of this, always instantiating your classes via the services container (even if they aren&#8217;t registered as services). The DI will fallback to a valid autoloader to finally load the class.</p>
+</div>
+</div>
+
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    <div class="related">
+      <ul>
+        <li class="right" >
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="mvc.html" title="MVC架构"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="tutorial-rest.html" title="教程三：创建简单的REST API"
+             >上一页</a> |</li> 
+      </ul>
+    </div>
+        <div id="disqus_thread" style="margin:30px auto 0 auto; width:80%;"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'phalcon'; // required: replace example with your forum shortname
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        <div id="footer">
+             &copy; 版权所有 2012, Phalcon Team.
+             最后更新日期是 Jul 09, 2013.
+            使用 <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2b1.
+        </div>
+
+    </div>
+  </body>
+</html>
