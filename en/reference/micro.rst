@@ -85,7 +85,7 @@ which the route is constrained for:
     $app->put('/api/products/update/{id}', "update_product");
 
     //Matches if the HTTP method is DELETE
-    $app->put('/api/products/remove/{id}', "delete_product");
+    $app->delete('/api/products/remove/{id}', "delete_product");
 
     //Matches if the HTTP method is OPTIONS
     $app->options('/api/products/info/{id}', "info_product");
@@ -210,7 +210,7 @@ Redirections could be performed to forward the execution flow to another route:
 
     //This route makes a redirection to another route
     $app->post('/old/welcome', function () use ($app) {
-        $app->response->redirect("new/welcome");
+        $app->response->redirect("new/welcome")->sendHeaders();
     });
 
     $app->post('/new/welcome', function () use ($app) {
@@ -383,7 +383,7 @@ In the following example, we explain how to control the application security usi
             if ($app->session->get('auth') == false) {
 
                 $app->flashSession->error("The user isn't authenticated");
-                $app->response->redirect("/");
+                $app->response->redirect("/")->sendHeaders();
 
                 //Return (false) stop the operation
                 return false;
@@ -395,7 +395,7 @@ In the following example, we explain how to control the application security usi
     $app = new Micro();
 
     //Bind the events manager to the app
-    $app->setEventsManager($eventsManager);
+    $app->setEventsManager($eventManager);
 
 Middleware events
 -----------------

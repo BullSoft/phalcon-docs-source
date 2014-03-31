@@ -1,3 +1,4 @@
+<<<<<<< HEAD:zh_CN/api/Phalcon_Mvc_Model_Row.rst
 Class **Phalcon\\Mvc\\Model\\Row**
 ==================================
 
@@ -38,3 +39,58 @@ Rows cannot be changed. It has only been implemented to meet the definition of t
 
 
 
+=======
+Class **Phalcon\\Mvc\\Model\\Row**
+==================================
+
+*implements* ArrayAccess, Countable, :doc:`Phalcon\\Mvc\\Model\\ResultInterface <Phalcon_Mvc_Model_ResultInterface>`
+
+This component allows Phalcon\\Mvc\\Model to return rows without an associated entity. This objects implements the ArrayAccess interface to allow access the object as object->x or array[x].
+
+
+Methods
+-------
+
+public  **setDirtyState** (*int* $dirtyState)
+
+Set the current object's state
+
+
+
+public *boolean*  **offsetExists** (*int* $index)
+
+Checks whether offset exists in the row
+
+
+
+public *string|\Phalcon\Mvc\ModelInterface*  **offsetGet** (*int* $index)
+
+Gets a record in a specific position of the row
+
+
+
+public  **offsetSet** (*int* $index, :doc:`Phalcon\\Mvc\\ModelInterface <Phalcon_Mvc_ModelInterface>` $value)
+
+Rows cannot be changed. It has only been implemented to meet the definition of the ArrayAccess interface
+
+
+
+public  **offsetUnset** (*int* $offset)
+
+Rows cannot be changed. It has only been implemented to meet the definition of the ArrayAccess interface
+
+
+
+public *array*  **toArray** ()
+
+Returns the instance as an array representation
+
+
+
+public *int*  **count** ()
+
+Counts how many properties were added to the row
+
+
+
+>>>>>>> e49c0b4730fea45ee3885b7b7b6cbc894b8de0d4:es/api/Phalcon_Mvc_Model_Row.rst

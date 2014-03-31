@@ -1,11 +1,12 @@
 Hello World Benchmark
 =====================
+
 How the benchmarks were performed?
 ----------------------------------
 We created a "Hello World" benchmark seeking to identify the smallest load overhead of each framework. Many
 people don't like this kind of benchmark because real-world applications require more complex features or
 structures. However, these tests identify the minimum time spent by each framework to perform a simple task.
-Such a task represents the mimimum requirement for every framework to process a single request.
+Such a task represents the minimum requirement for every framework to process a single request.
 
 More specifically, the benchmark only measures the time it takes for a framework to start, run an action and
 free up resources at the end of the request. Any PHP application based on an MVC architecture will require
@@ -25,22 +26,22 @@ These were the measurements we record to identify the overall performance of eac
 * Number of included PHP files on a single request (measured using function get_included_files_.
 * Memory Usage per request (measured using function memory_get_usage_.
 
-Pariticipant Frameworks
+Participant Frameworks
 -----------------------
-* Yii_ (YII_DEBUG=false) (yii-1.1.13)
-* Symfony_ (2.0.11)
-* `Zend Framework`_ (1.11.11)
-* Kohana_ (3.2.0)
-* FuelPHP_ (1.2.1)
-* CakePHP_ (2.1.3)
-* Laravel_ 3.2.5
-* CodeIgniter_ (2.1.0)
-* Nette_ (2.0.4)
+* Yii_
+* Symfony_ 
+* `Zend Framework`_ 
+* Kohana_
+* FuelPHP_ 
+* Laravel_
+* CodeIgniter_
 
 Results
 -------
+
 Yii (YII_DEBUG=false) Version yii-1.1.13
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 .. code-block:: php
 
     # ab -n 2000 -c 10 http://localhost/bench/helloworld/yii/index.php?r=say/hello
@@ -90,6 +91,7 @@ Yii (YII_DEBUG=false) Version yii-1.1.13
 
 Symfony Version 2.1.6
 ^^^^^^^^^^^^^^^^^^^^^^
+
 .. code-block:: php
 
     # ab -n 2000 -c 10 http://localhost/bench/Symfony/web/app.php/say/hello/
@@ -139,6 +141,7 @@ Symfony Version 2.1.6
 
 CodeIgniter 2.1.0
 ^^^^^^^^^^^^^^^^^
+
 .. code-block:: php
 
     # ab -n 2000 -c 10 http://localhost/bench/codeigniter/index.php/say/hello
@@ -188,6 +191,7 @@ CodeIgniter 2.1.0
 
 Kohana 3.2.0
 ^^^^^^^^^^^^
+
 .. code-block:: php
 
     # ab -n 2000 -c 10 http://localhost/bench/helloworld/kohana/index.php/say/hello
@@ -237,6 +241,7 @@ Kohana 3.2.0
 
 Fuel 1.2.1
 ^^^^^^^^^^
+
 .. code-block:: php
 
     # ab -n 2000 -c 10 http://localhost/bench/helloworld/fuel/public/say/hello
@@ -284,57 +289,9 @@ Fuel 1.2.1
       99%     38
      100%     80 (longest request)
 
-Cake 2.1.3
-^^^^^^^^^^
-.. code-block:: php
-
-    # ab -n 10 -c 5 http://localhost/bench/cake/say/hello
-    This is ApacheBench, Version 2.3 <$Revision: 655654 $>
-    Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
-    Licensed to The Apache Software Foundation, http://www.apache.org/
-
-    Benchmarking localhost (be patient).....done
-
-
-    Server Software:        Apache/2.2.22
-    Server Hostname:        localhost
-    Server Port:            80
-
-    Document Path:          /bench/cake/say/hello
-    Document Length:        16 bytes
-
-    Concurrency Level:      5
-    Time taken for tests:   30.051 seconds
-    Complete requests:      10
-    Failed requests:        0
-    Write errors:           0
-    Total transferred:      1680 bytes
-    HTML transferred:       160 bytes
-    Requests per second:    0.33 [#/sec] (mean)
-    Time per request:       15025.635 [ms] (mean)
-    Time per request:       3005.127 [ms] (mean, across all concurrent requests)
-    Transfer rate:          0.05 [Kbytes/sec] received
-
-    Connection Times (ms)
-                  min  mean[+/-sd] median   max
-    Connect:        0    2   3.6      0      11
-    Processing: 15009 15020   9.8  15019   15040
-    Waiting:        9   21   7.9     25      33
-    Total:      15009 15022   8.9  15021   15040
-
-    Percentage of the requests served within a certain time (ms)
-      50%  15021
-      66%  15024
-      75%  15024
-      80%  15032
-      90%  15040
-      95%  15040
-      98%  15040
-      99%  15040
-     100%  15040 (longest request)
-
 Zend Framework 1.11.11
 ^^^^^^^^^^^^^^^^^^^^^^
+
 .. code-block:: php
 
     # ab -n 2000 -c 10 http://localhost/bench/helloworld/zendfw/public/index.php
@@ -384,6 +341,7 @@ Zend Framework 1.11.11
 
 Laravel 3.2.5
 ^^^^^^^^^^^^^
+
 .. code-block:: php
 
     # ab -n 2000 -c 10 http://localhost/bench/helloworld/laravel/public/say/hello
@@ -432,59 +390,9 @@ Laravel 3.2.5
       99%     48
      100%     93 (longest request)
 
-Nette 2.0.4
-^^^^^^^^^^^
-.. code-block:: php
-
-    # ab -n 2000 -c 10 http://localhost/bench/helloworld/nette/www/index.php
-
-    This is ApacheBench, Version 2.3 <$Revision: 655654 $>
-    Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
-    Licensed to The Apache Software Foundation, http://www.apache.org/
-
-    Benchmarking localhost (be patient)
-
-
-    Server Software:        Apache/2.2.22
-    Server Hostname:        localhost
-    Server Port:            80
-
-    Document Path:          /bench/helloworld/nette/www/index.php
-    Document Length:        24963 bytes
-
-    Concurrency Level:      10
-    Time taken for tests:   7.750 seconds
-    Complete requests:      2000
-    Failed requests:        200
-       (Connect: 0, Receive: 0, Length: 200, Exceptions: 0)
-    Write errors:           0
-    Total transferred:      50370200 bytes
-    HTML transferred:       49926200 bytes
-    Requests per second:    258.07 [#/sec] (mean)
-    Time per request:       38.749 [ms] (mean)
-    Time per request:       3.875 [ms] (mean, across all concurrent requests)
-    Transfer rate:          6347.24 [Kbytes/sec] received
-
-    Connection Times (ms)
-                  min  mean[+/-sd] median   max
-    Connect:        0   38  13.1     34     115
-    Processing:     0    1   4.7      0      99
-    Waiting:        0    0   4.5      0      98
-    Total:         15   39  13.2     34     116
-
-    Percentage of the requests served within a certain time (ms)
-      50%     34
-      66%     38
-      75%     46
-      80%     50
-      90%     58
-      95%     64
-      98%     75
-      99%     82
-     100%    116 (longest request)
-
 Phalcon Version 0.8.0
 ^^^^^^^^^^^^^^^^^^^^^
+
 .. code-block:: php
 
     # ab -n 2000 -c 10 http://localhost/bench/helloworld/phalcon/index.php?_url=/say/hello
@@ -549,7 +457,6 @@ The first graph shows how many requests per second each framework was able to ac
             data.addColumn('string', 'Framework');
             data.addColumn('number', 'Requests per second');
             data.addRows([
-                ['Nette', 258.07],
                 ['Zend', 354.55],
                 ['Laravel', 489.03],
                 ['Symfony', 541.01],
@@ -579,7 +486,6 @@ The first graph shows how many requests per second each framework was able to ac
             data.addColumn('string', 'Framework');
             data.addColumn('number', 'Time per Request');
             data.addRows([
-                ['Nette', 3.875],
                 ['Zend', 2.820],
                 ['Laravel', 2.045],
                 ['Symfony', 1.848],
@@ -603,7 +509,6 @@ The first graph shows how many requests per second each framework was able to ac
             data.addColumn('string', 'Framework');
             data.addColumn('number', 'Memory Usage (MB)');
             data.addRows([
-                ['Nette', 3.5],
                 ['Zend', 1.75],
                 ['Symfony', 1.5],
                 ['Yii', 1.5],
@@ -634,7 +539,6 @@ The first graph shows how many requests per second each framework was able to ac
                 ['Yii', 27],
                 ['CodeIgniter', 23],
                 ['Symfony', 18],
-                ['Nette', 7],
                 ['Phalcon', 4]
             ]);
 
@@ -667,8 +571,6 @@ The compiled nature of Phalcon offers extraordinary performance that outperforms
 .. _CodeIgniter: http://codeigniter.com/
 .. _Kohana: http://kohanaframework.org/index
 .. _FuelPHP: http://fuelphp.com/
-.. _CakePHP: http://cakephp.org/
 .. _Laravel: http://www.laravel.com/
 .. _Zend Framework: http://framework.zend.com
-.. _Nette: http://nette.org/
 

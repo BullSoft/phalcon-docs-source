@@ -141,7 +141,7 @@ The above example changes slightly (especially in terms of configuration) when w
 
     // Create the component that will cache "Data" to a "Memcached" backend
     // Memcached connection settings
-    $cache = new Phalcon\Cache\Backend\Memcache($frontCache, array(
+    $cache = new Phalcon\Cache\Backend\Libmemcached($frontCache, array(
         "host" => "localhost",
         "port" => "11211"
     ));
@@ -204,14 +204,13 @@ The only requirement is to know the key that the data have been stored with.
     <?php
 
     // Delete an item with a specific key
-    $cache->queryKeys("someKey");
+    $cache->delete("someKey");
 
     // Delete all items from the cache
     $keys = $cache->queryKeys();
     foreach ($keys as $key) {
         $cache->delete($key);
     }
-
 
 Checking cache existence
 ------------------------
@@ -386,7 +385,7 @@ This backend will store cached content on a memcached server. The available opti
 +------------+-------------------------------------------------------------+
 | port       | memcached port                                              |
 +------------+-------------------------------------------------------------+
-| persistent | create a persitent connection to memcached?                 |
+| persistent | create a persistent connection to memcached?                 |
 +------------+-------------------------------------------------------------+
 
 APC Backend Options

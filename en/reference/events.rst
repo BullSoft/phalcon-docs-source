@@ -178,7 +178,7 @@ This component is EventsManager aware; when its method "someTask" is executed it
 
     <?php
 
-    use Phalcon\Events\EventsAwareInterface
+    use Phalcon\Events\EventsAwareInterface;
 
     class MyComponent implements EventsAwareInterface
     {
@@ -242,7 +242,7 @@ A listener is simply a class that implements any of all the events triggered by 
     $myComponent = new MyComponent();
 
     //Bind the eventsManager to the instance
-    $myComponent->setEventsManager($myComponent);
+    $myComponent->setEventsManager($eventsManager);
 
     //Attach the listener to the EventsManager
     $eventsManager->attach('my-component', new SomeListener());
@@ -292,7 +292,7 @@ If a listener it is only interested in listening a specific type of event you ca
         //...
     });
 
-Event Propagation/Cancelation
+Event Propagation/Cancellation
 -----------------------------
 Many listeners may be added to the same event manager, this means that for the same type of event many listeners can be notified.
 The listeners are notified in the order they were registered in the EventsManager. Some events are cancelable, indicating that

@@ -53,7 +53,7 @@ The :doc:`Phalcon\\Db\\DialectInterface <../api/Phalcon_Db_DialectInterface>` in
 
 Connecting to Databases
 -----------------------
-To create a connection it's neccesary instantiate the adapter class. It only requires an array with the connection parameters. The example
+To create a connection it's necessary instantiate the adapter class. It only requires an array with the connection parameters. The example
 below shows how to create a connection passing both required and optional parameters:
 
 .. code-block:: php
@@ -252,7 +252,7 @@ To insert, update or delete rows, you can use raw SQL or use the preset function
 
     //With placeholders
     $sql     = "INSERT INTO `robots`(`name`, `year`) VALUES (?, ?)";
-    $success = $connection->execute($sql, array('Astroy Boy', 1952));
+    $success = $connection->execute($sql, array('Astro Boy', 1952));
 
     // Generating dynamically the necessary SQL
     $success = $connection->insert(
@@ -267,7 +267,7 @@ To insert, update or delete rows, you can use raw SQL or use the preset function
 
     //With placeholders
     $sql     = "UPDATE `robots` SET `name` = ? WHERE `id` = ?";
-    $success = $connection->execute($sql, array('Astroy Boy', 101));
+    $success = $connection->execute($sql, array('Astro Boy', 101));
 
     // Generating dynamically the necessary SQL
     $success = $connection->update(
@@ -311,7 +311,7 @@ often increase the performance on most database systems:
         $connection->commit();
 
     } catch(Exception $e) {
-        //An exception has ocurred rollback the transaction
+        //An exception has occurred rollback the transaction
         $connection->rollback();
     }
 
@@ -344,7 +344,7 @@ is created:
             $connection->commit();
 
         } catch(Exception $e) {
-            //An error has ocurred, release the nested transaction
+            //An error has occurred, release the nested transaction
             $connection->rollback();
         }
 
@@ -355,7 +355,7 @@ is created:
         $connection->commit();
 
     } catch(Exception $e) {
-        //An exception has ocurred rollback the transaction
+        //An exception has occurred rollback the transaction
         $connection->rollback();
     }
 
@@ -379,7 +379,7 @@ Some events when returning boolean false could stop the active operation. The fo
 +---------------------+-----------------------------------------------------------+---------------------+
 | rollbackTransaction | Before a transaction is rollbacked                        | No                  |
 +---------------------+-----------------------------------------------------------+---------------------+
-| commitTransaction   | Before a transaction is commited                          | No                  |
+| commitTransaction   | Before a transaction is committed                         | No                  |
 +---------------------+------------------------------------------------------------+--------------------+
 
 Bind an EventsManager to a connection is simple, Phalcon\\Db will trigger the events with the type "db":
@@ -522,11 +522,11 @@ Using high-level abstraction components such as :doc:`Phalcon\\Db <../api/Phalco
 
     use Phalcon\Logger,
         Phalcon\Events\Manager as EventsManager,
-        Phalcon\Logger\Adapter\File as Logger;
+        Phalcon\Logger\Adapter\File as FileLogger;
 
     $eventsManager = new EventsManager();
 
-    $logger = new Logger("app/logs/db.log");
+    $logger = new FileLogger("app/logs/db.log");
 
     //Listen all the database events
     $eventsManager->attach('db', function($event, $connection) use ($logger) {
@@ -674,7 +674,7 @@ Phalcon\\Db::createTable() accepts an associative array describing the table. Co
 +=================+============================================================================================================================================+==========+
 | "type"          | Column type. Must be a Phalcon\\Db\\Column constant (see below for a list)                                                                 | No       |
 +-----------------+--------------------------------------------------------------------------------------------------------------------------------------------+----------+
-| "primary"       | True if the table is part of the table's primary key                                                                                       | Yes      |
+| "primary"       | True if the column is part of the table's primary
 +-----------------+--------------------------------------------------------------------------------------------------------------------------------------------+----------+
 | "size"          | Some type of columns like VARCHAR or INTEGER may have a specific size                                                                      | Yes      |
 +-----------------+--------------------------------------------------------------------------------------------------------------------------------------------+----------+

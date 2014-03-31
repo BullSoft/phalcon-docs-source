@@ -3,11 +3,6 @@ Installation
 PHP extensions require a slightly different installation method to a traditional php-based library or framework. You can either
 download a binary package for the system of your choice or build it from the sources.
 
-During the last few months, we have extensively researched PHP's behavior, investigating areas for significant
-optimizations (big or small). Through understanding of the Zend Engine, we managed to remove unecessary validations,
-compacted code, performed optimizations and generated low-level solutions so as to achieve maximum performance
-from Phalcon.
-
 .. highlights::
     Phalcon compiles from PHP 5.3.1, but because of old PHP bugs causing memory leaks, we highly recommend you use at least PHP 5.3.11 or greater.
 
@@ -53,20 +48,18 @@ Specific packages for common platforms:
 .. code-block:: bash
 
     #Ubuntu
-    sudo apt-get install git-core gcc autoconf
-    sudo apt-get install php5-dev php5-mysql
+    sudo apt-get install gcc make git-core libpcre3-dev php5-dev 
 
     #Suse
-    sudo yast -i gcc make autoconf2.13
-    sudo yast -i php5-devel php5-mysql
+    sudo yast -i gcc make php5-devel
+    #or
+    sudo zypper install gcc make php5-devel
 
-    #CentOS/RedHat
-    sudo yum install gcc make
-    sudo yum install php-devel
+    #CentOS/Fedora/RHEL
+    sudo yum install git gcc make pcre-devel php-devel
 
     #Solaris
-    pkg install gcc-45
-    pkg install php-53 apache-php53
+    pkg install gcc-45 php-53 apache-php53
 
 Compilation
 ^^^^^^^^^^^
@@ -78,10 +71,14 @@ Creating the extension:
     cd cphalcon/build
     sudo ./install
 
-Add extension to your php.ini
+Add extension to your php configuration:
 
 .. code-block:: bash
-
+    
+    #Ubuntu: Add this line in your php.ini
+    extension=phalcon.so
+    
+    #Centos/RedHat: Add a file called phalcon.ini in /etc/php.d/ with this content:
     extension=phalcon.so
 
 Restart the webserver.
@@ -119,3 +116,4 @@ Installation notes for Web Servers:
     apache
     nginx
     cherokee
+    built-in

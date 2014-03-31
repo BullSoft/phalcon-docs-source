@@ -99,10 +99,10 @@ the format we expect.
     $filter = new \Phalcon\Filter();
 
     // returns "Hello"
-    $filter->filter("<h1>Hello</h1>", "striptags");
+    $filter->sanitize("<h1>Hello</h1>", "striptags");
 
     // returns "Hello"
-    $filter->filter("  Hello   ", "trim");
+    $filter->sanitize("  Hello   ", "trim");
 
 
 Types of Built-in Filters
@@ -133,7 +133,7 @@ The following are the built-in filters provided by this component:
 
 Creating your own Filters
 -------------------------
-You can add your own filters to :doc:`Phalcon\\Filter <../api/Phalcon_Filter>`. The filter function could be an anonomyous function:
+You can add your own filters to :doc:`Phalcon\\Filter <../api/Phalcon_Filter>`. The filter function could be an anonymous function:
 
 .. code-block:: php
 

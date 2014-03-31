@@ -30,15 +30,15 @@ file must contain a single class; its class name should be in camel case notatio
 
 The above example shows the implementation of the "Robots" model. Note that the class Robots inherits from :doc:`Phalcon\\Mvc\\Model <../api/Phalcon_Mvc_Model>`.
 This component provides a great deal of functionality to models that inherit it, including basic database
-CRUD (Create, Read, Update, Destroy) operations, data validation, as well as sophisticated search support and the ability to relate multiple models
+CRUD (Create, Read, Update, Delete) operations, data validation, as well as sophisticated search support and the ability to relate multiple models
 with each other.
 
 .. highlights::
 
-    If you're using PHP 5.4/5.5 is recommended declare each column that makes part of the model in order to save
+    If you're using PHP 5.4/5.5 it is recommended you declare each column that makes part of the model in order to save
     memory and reduce the memory allocation.
 
-By default model "Robots" will refer to the table "robots". If you want to manually specify another name for the mapping table,
+By default, the model "Robots" will refer to the table "robots". If you want to manually specify another name for the mapping table,
 you can use the getSource() method:
 
 .. code-block:: php
@@ -55,8 +55,8 @@ you can use the getSource() method:
 
     }
 
-The model Robots now maps to "the_robots" table. In addition to the above method the 'initialize' method is available.
-This method aids in setting up the model with a custom behavior i.e. a different table:
+The model Robots now maps to "the_robots" table. The initialize() method aids in setting up the model with a custom behavior i.e. a different table.
+The initialize() method is only called once during the request.
 
 .. code-block:: php
 
@@ -90,9 +90,81 @@ created you can 'onConstruct':
 
     }
 
+Public properties vs. Setters/Getters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Models can be implemented with properties of public scope, meaning that each property can be read/updated
+from any part of the code that has instantiated that model class without any restrictions:
+
+.. code-block:: php
+
+    <?php
+
+    class Robots extends \Phalcon\Mvc\Model
+    {
+        public $id;
+
+        public $name;
+
+        public $price;
+    }
+
+By using getters and setters you can control which properties are visible publicly perform various transformations
+to the data (which would be impossible otherwise) and also add validation rules to the data stored in the object:
+
+.. code-block:: php
+
+    <?php
+
+    class Robots extends \Phalcon\Mvc\Model
+    {
+        protected $id;
+
+        protected $name;
+
+        protected $price;
+
+        public function getId()
+        {
+            return $this->id;
+        }
+
+        public function setName($name)
+        {
+            //The name is too short?
+            if (strlen($name) < 10) {
+                throw new \InvalidArgumentException('The name is too short');
+            }
+            $this->name = $name;
+        }
+
+        public function getName()
+        {
+            return $this->name;
+        }
+
+        public function setPrice($price)
+        {
+            //Negative prices aren't allowed
+            if ($price < 0) {
+                throw new \InvalidArgumentException('Price can\'t be negative');
+            }
+            $this->price = $price;
+        }
+
+        public function getPrice()
+        {
+            //Convert the value to double before be used
+            return (double) $this->price;
+        }
+    }
+
+Public properties provide less complexity in development. However getters/setters can heavily increase the testability,
+extensibility and maintainability of applications. Developers can decide which strategy is more appropriate for the
+application they are creating. The ORM is compatible with both schemes of defining properties.
+
 Models in Namespaces
---------------------
-Namespaces can be used to avoid class name collision. In this case it is necessary to indicate the name of the related table using getSource:
+^^^^^^^^^^^^^^^^^^^^
+Namespaces can be used to avoid class name collision. The mapped table is taken from the class name, in this case 'Robots':
 
 .. code-block:: php
 
@@ -102,11 +174,6 @@ Namespaces can be used to avoid class name collision. In this case it is necessa
 
     class Robots extends \Phalcon\Mvc\Model
     {
-
-        public function getSource()
-        {
-            return "robots";
-        }
 
     }
 
@@ -267,7 +334,43 @@ If you prefer, there is also available a way to create queries in an object-orie
 The static method query() returns a :doc:`Phalcon\\Mvc\\Model\\Criteria <../api/Phalcon_Mvc_Model_Criteria>` object that is friendly with IDE autocompleters.
 
 All the queries are internally handled as :doc:`PHQL <phql>` queries. PHQL is a high-level, object-oriented and SQL-like language.
-This language provide you more features to perform queries like joining other models, define groupings, add agreggations etc.
+This language provide you more features to perform queries like joining other models, define groupings, add aggregations etc.
+
+Lastly, there is the findFirstBy<property-name>() method. This method expands on the "findFirst()" method mentioned earlier. It allows you to quickly perform a
+retrieval from a table by using the property name in the method itself and passing it a parameter that contains the data you want to search for in that column.
+An example is in order, so taking our Robots model mentioned earlier :
+
+.. code-block:: php
+
+    <?php
+
+    class Robots extends \Phalcon\Mvc\Model
+    {
+        public $id;
+
+        public $name;
+
+        public $price;
+    }
+
+We have three properties to work with here. $id, $name and $price. So, let's say you want to retrieve the first record in the table with the name
+'Terminator'. This could be written like so :
+
+.. code-block:: php
+
+    <?php
+
+    $name = "Terminator";
+    $robot = Robots::findFirstByName($name);
+
+    if($robot){
+        $this->flash->success("The first robot with the name " . $name . " cost " . $robot->price ".");
+    }else{
+        $this->flash->error("There were no robots found in our table with the name " . $name ".");
+    }
+
+Notice that we used 'Name' in the method call and passed the variable $name to it, which contains the name we are looking for in our table. Notice also that
+when we find a match with our query, all the other properties are available to us as well.
 
 Model Resultsets
 ^^^^^^^^^^^^^^^^
@@ -306,13 +409,13 @@ is that at any time there is only one record in memory. This greatly helps in me
 
     // Move the internal cursor to the third robot
     $robots->seek(2);
-    $robot = $robots->current()
+    $robot = $robots->current();
 
     // Access a robot by its position in the resultset
     $robot = $robots[5];
 
     // Check if there is a record in certain position
-    if (isset($robots[3]) {
+    if (isset($robots[3])) {
        $robot = $robots[3];
     }
 
@@ -364,7 +467,7 @@ Phalcon additionally allows you to filter the data using PHP using any resource 
     $customers = Customers::find()->filter(function($customer) {
 
         //Return only customers with a valid e-mail
-        if (filter_var($customer->email, FILTER_VALIDATE_EMAIL))) {
+        if (filter_var($customer->email, FILTER_VALIDATE_EMAIL)) {
             return $customer;
         }
 
@@ -460,9 +563,9 @@ Additionally you can set the parameter "bindTypes", this allows defining how the
 Bound parameters are available for all query methods such as find() and findFirst() but also the calculation
 methods like count(), sum(), average() etc.
 
-Initializing fetched records
-----------------------------
-M ay be the case that after obtaining a record of the database is necessary to initialise the data before
+Initializing/Preparing fetched records
+--------------------------------------
+May be the case that after obtaining a record from the database is necessary to initialise the data before
 being used by the rest of the application. You can implement the method 'afterFetch' in a model, this event
 will be executed just after create the instance and assign the data to it:
 
@@ -472,6 +575,12 @@ will be executed just after create the instance and assign the data to it:
 
     class Robots extends Phalcon\Mvc\Model
     {
+
+        public $id;
+
+        public $name;
+
+        public $status;
 
         public function beforeSave()
         {
@@ -484,6 +593,28 @@ will be executed just after create the instance and assign the data to it:
             //Convert the string to an array
             $this->status = explode(',', $this->status);
         }
+    }
+
+If you use getters/setters instead of/or together with public properties, you can initialize the field once it is
+accessed:
+
+.. code-block:: php
+
+    <?php
+
+    class Robots extends Phalcon\Mvc\Model
+    {
+        public $id;
+
+        public $name;
+
+        public $status;
+
+        public function getStatus()
+        {
+            return explode(',', $this->status);
+        }
+
     }
 
 Relationships between Models
@@ -659,7 +790,7 @@ When explicitly defining the relationships between models, it is easy to find re
 
 Phalcon uses the magic methods __set/__get/__call to store or retrieve related data using relationships.
 
-By accesing an attribute with the same name as the relationship will retrieve all its related record(s).
+By accessing an attribute with the same name as the relationship will retrieve all its related record(s).
 
 .. code-block:: php
 
@@ -811,7 +942,7 @@ Since both relations point to the same model (Robots), obtain the records relate
     //but, how to get the related record based on the column (similar_robots_id)
     //if both relationships have the same name?
 
-The aliases allow us to rename both releationships to solve these problems:
+The aliases allow us to rename both relationships to solve these problems:
 
 .. code-block:: php
 
@@ -951,7 +1082,7 @@ to maintain the integrity of data:
 
     namespace Store\Models;
 
-    use Phalcon\Mvc\Model
+    use Phalcon\Mvc\Model,
         Phalcon\Mvc\Model\Relation;
 
     class Robots extends Model
@@ -1008,7 +1139,7 @@ Count examples:
 
     // Avoid SQL injections using bound parameters
     $group = Employees::count(array(
-        "type > ?0"
+        "type > ?0",
         "bind" => array($type)
     ));
 
@@ -1046,7 +1177,7 @@ Sum examples:
 
     // Avoid SQL injections using bound parameters
     $group = Employees::sum(array(
-        "conditions" => "area > ?0"
+        "conditions" => "area > ?0",
         "bind" => array($area)
     ));
 
@@ -1067,8 +1198,8 @@ Average examples:
 
     // Avoid SQL injections using bound parameters
     $average = Employees::average(array(
-        "column" => "age"
-        "conditions" => "area > ?0"
+        "column" => "age",
+        "conditions" => "area > ?0",
         "bind" => array($area)
     ));
 
@@ -1207,7 +1338,7 @@ an insecure array without worrying about possible SQL injections:
 .. highlights::
 
     Without precautions mass assignment could allow attackers to set any database column’s value. Only use this feature
-    if you want that a user can insert/update every column in the model, even if those fields are not in the submitted
+    if you want to permit a user to insert/update every column in the model, even if those fields are not in the submitted
     form.
 
 You can set an additional parameter in 'save' to set a whitelist of fields that only must taken into account when doing
@@ -1289,7 +1420,7 @@ Magic properties can be used to store a records and its related properties:
 
     <?php
 
-    // Create a robot
+    // Create an artist
     $artist = new Artists();
     $artist->name = 'Shinichi Osawa';
     $artist->country = 'Japan';
@@ -1335,9 +1466,17 @@ Saving a record and its related records in a has-many relation:
     // Save the album + its songs
     $album->save();
 
-Saving the album and the artist at the same time implictly makes use of a transaction so if anything
+Saving the album and the artist at the same time implicitly makes use of a transaction so if anything
 goes wrong with saving the related records, the parent will not be saved either. Messages are
 passed back to the user for information regarding any errors.
+
+Note: Adding related entities by overloading the following methods is not possible:
+
+ - Phalcon\Mvc\Model::beforeSave()
+ - Phalcon\Mvc\Model::beforeCreate()
+ - Phalcon\Mvc\Model::beforeUpdate()
+
+You need to overload Phalcon\Mvc\Model::save() for this to work from within a model.
 
 Validation Messages
 ^^^^^^^^^^^^^^^^^^^
@@ -1376,7 +1515,7 @@ generated the message or the message type:
 | InvalidUpdateAttempt | Produced when a record is attempted to be updated but it doesn't exist                                                             |
 +----------------------+------------------------------------------------------------------------------------------------------------------------------------+
 
-The method getMessages() can be overriden in a model to replace/translate the default messages generated automatically by the ORM:
+The method getMessages() can be overridden in a model to replace/translate the default messages generated automatically by the ORM:
 
 .. code-block:: php
 
@@ -1547,7 +1686,7 @@ If we want all objects created in our application use the same EventsManager, th
             if (get_class($model) == 'Robots') {
 
                 if ($event->getType() == 'beforeSave') {
-                    if ($modle->name == 'Scooby Doo') {
+                    if ($model->name == 'Scooby Doo') {
                         echo "Scooby Doo isn't a robot!";
                         return false;
                     }
@@ -1659,7 +1798,7 @@ the value is not included in the method then the validator will fail and return 
 | Url          | Validates that a value has a valid URL format                                                                                                                    | :doc:`Example <../api/Phalcon_Mvc_Model_Validator_Url>`           |
 +--------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------+
 
-In addition to the built-in validatiors, you can create your own validators:
+In addition to the built-in validators, you can create your own validators:
 
 .. code-block:: php
 
@@ -1839,7 +1978,7 @@ Forcing a default value can be done in the following way:
     $robot->created_at = new \Phalcon\Db\RawValue('default');
     $robot->create();
 
-A callback also can be used to create a conditional assigment of automatic default values:
+A callback also can be used to create a conditional assignment of automatic default values:
 
 .. code-block:: php
 
@@ -2138,8 +2277,8 @@ that is performed operations over a model:
 
     <?php
 
-    use Phalcon\Mvc\ModelInterface,
-        Phalcon\Mvc\Model\BehaviorInterface;
+    use Phalcon\Mvc\Model\Behavior;
+    use Phalcon\Mvc\Model\BehaviorInterface;
 
     class Blameable extends Behavior implements BehaviorInterface
     {
@@ -2319,9 +2458,9 @@ implicitly creates a transaction to ensure that data are correctly stored:
 Isolated Transactions
 ^^^^^^^^^^^^^^^^^^^^^
 Isolated transactions are executed in a new connection ensuring that all the generated SQL,
-virtual foreign key checking and business rules are isolated from the main connection.
+virtual foreign key checks and business rules are isolated from the main connection.
 This kind of transaction requires a transaction manager that globally manages each
-transaction created ensuring that it's correctly rollbacked/commited before ending the request:
+transaction created ensuring that they are correctly rolled back/committed before ending the request:
 
 .. code-block:: php
 
@@ -2399,7 +2538,7 @@ Transactions can be used to delete many records in a consistent way:
     }
 
 Transactions are reused no matter where the transaction object is retrieved. A new transaction is generated only when a commit() or rollback()
-is performed. You can use the service container to create an overall transaction manager for the entire application:
+is performed. You can use the service container to create the global transaction manager for the entire application:
 
 .. code-block:: php
 
@@ -2551,7 +2690,7 @@ you can do this:
             return false;
         }
         return true;
-    }
+    });
 
 Deleting related records
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3072,7 +3211,7 @@ As models access the default database connection, all SQL statements that are se
 
     $robot = new Robots();
     $robot->name = "Robby the Robot";
-    $robot->created_at = "1956-07-21"
+    $robot->created_at = "1956-07-21";
     if ($robot->save() == false) {
         echo "Cannot save robot";
     }
@@ -3136,8 +3275,8 @@ Profiling some queries:
 
     // Send some SQL statements to the database
     Robots::find();
-    Robots::find(array("order" => "name");
-    Robots::find(array("limit" => 30);
+    Robots::find(array("order" => "name"));
+    Robots::find(array("limit" => 30));
 
     //Get the generated profiles from the profiler
     $profiles = $di->get('profiler')->getProfiles();
@@ -3149,7 +3288,7 @@ Profiling some queries:
        echo "Total Elapsed Time: ", $profile->getTotalElapsedSeconds(), "\n";
     }
 
-Each generated profile contains the duration in miliseconds that each instruction takes to complete as well as the generated SQL statement.
+Each generated profile contains the duration in milliseconds that each instruction takes to complete as well as the generated SQL statement.
 
 Injecting services into Models
 ------------------------------
@@ -3168,8 +3307,8 @@ You may be required to access the application services within a model, the follo
             $flash = $this->getDI()->getFlash();
 
             //Show validation messages
-            foreach ($this->getMesages() as $message) {
-                $flash->error((string) $message);
+            foreach ($this->getMessages() as $message) {
+                $flash->error($message);
             }
         }
 

@@ -54,6 +54,23 @@ Then in the views added resources can be printed:
         </body>
     <html>
 
+Volt syntax:
+
+.. code-block:: html+jinja
+
+    <html>
+        <head>
+            <title>Some amazing website</title>
+              {{ assets.outputCss() }}
+        </head>
+        <body>
+
+            <!-- ... -->
+
+              {{ assets.outputJs() }}
+        </body>
+    <html>
+
 Local/Remote resources
 ----------------------
 Local resources are those who're provided by the same application and they're located in the document root
@@ -65,12 +82,16 @@ Remote resources are those such as common library like jquery, bootstrap, etc. t
 .. code-block:: php
 
     <?php
+    
+    public function indexAction()
+    {
 
-    //Add some local CSS resources
-    $this->assets
-        ->addCss('//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css', false)
-        ->addCss('css/style.css', true);
-
+        //Add some local CSS resources
+        $this->assets
+            ->addCss('//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css', false)
+            ->addCss('css/style.css', true);
+    }
+    
 Collections
 -----------
 Collections groups resources of the same type, the assets manager implicitly creates two collections: css and js.
@@ -109,6 +130,23 @@ Then in the views:
         </body>
     <html>
 
+Volt syntax:
+
+.. code-block:: html+jinja
+
+    <html>
+        <head>
+            <title>Some amazing website</title>
+              {{ assets.outputCss('header') }}
+        </head>
+        <body>
+
+            <!-- ... -->
+
+              {{ assets.outputJs('footer') }}
+        </body>
+    <html>
+    
 Prefixes
 --------
 Collections can be URL-prefixed, this allows to easily change from a server to other at any moment:
@@ -119,7 +157,7 @@ Collections can be URL-prefixed, this allows to easily change from a server to o
 
     $scripts = $this->assets->collection('footer');
 
-    if ($config->enviroment == 'development') {
+    if ($config->environment == 'development') {
         $scripts->setPrefix('/');
     } else {
         $scripts->setPrefix('http:://cdn.example.com/');
@@ -128,7 +166,7 @@ Collections can be URL-prefixed, this allows to easily change from a server to o
     $scripts->addJs('js/jquery.js')
             ->addJs('js/bootstrap.min.js');
 
-A chaineable syntax is available too:
+A chainable syntax is available too:
 
 .. code-block:: php
 
@@ -144,7 +182,7 @@ A chaineable syntax is available too:
 Minification/Filtering
 ----------------------
 Phalcon\\Assets provides built-in minification of Javascript and CSS resources. The developer can create a collection of
-resources instructing the Assets Manager which ones must be filtered and which ones must be​ left as they are.
+resources instructing the Assets Manager which ones must be filtered and which ones must be left as they are.
 In addition to the above, Jsmin by Douglas Crockford is part of the core extension offering minification of javascript files
 for maximum performance. In the CSS land, CSSMin by Ryan Day is also available to minify CSS files:
 

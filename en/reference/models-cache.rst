@@ -321,7 +321,7 @@ This language gives you much more freedom to create all kinds of queries. Of cou
 
     $query = $this->modelsManager->createQuery($phql);
 
-    $query->setCache(array(
+    $query->cache(array(
         "key" => "cars-by-name",
         "lifetime" => 300
     ));
@@ -369,11 +369,11 @@ This also applies if we retrieve a set of invoices to show customers that corres
     <?php
 
     //Get a set of invoices
-    // SELECT * FROM invoices
+    // SELECT * FROM invoices;
     foreach (Invoices::find() as $invoice) {
 
         //Get the customer related to the invoice
-        // SELECT * FROM customers WHERE id = ?
+        // SELECT * FROM customers WHERE id = ?;
         $customer = $invoice->customer;
 
         //Print his/her name
@@ -460,7 +460,7 @@ Do not forget to register the custom models manager in the DI:
 
 Caching Related Records
 -----------------------
-When a related record is queried, the ORM internally builds the appropiate condition and gets the required records using find/findFirst
+When a related record is queried, the ORM internally builds the appropriate condition and gets the required records using find/findFirst
 in the target model according to the following table:
 
 +---------------------+---------------------------------------------------------------------------------------------------------------+
@@ -597,7 +597,7 @@ Note that this process can also be performed with PHQL following an alternative 
 
             $query = $this->getModelsManager()->executeQuery($phql);
 
-            $query->setCache(array(
+            $query->cache(array(
                 "key" => self::_createKey($conditions, $params),
                 "lifetime" => 300
             ));
@@ -704,7 +704,7 @@ this class looks like:
     {
 
         /**
-         * The execute method is overrided
+         * The execute method is overridden
          */
         public function execute($params=null, $types=null)
         {

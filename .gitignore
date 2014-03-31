@@ -1,6 +1,7 @@
 .project
 build
 en/_build
+<<<<<<< HEAD
 zh
 es
 fr
@@ -8,9 +9,24 @@ ja
 pl
 pt
 ru
+=======
+zh/_build
+ru/_build
+es/_build
+fr/_build
+pt/_build
+pl/_build
+>>>>>>> e49c0b4730fea45ee3885b7b7b6cbc894b8de0d4
 _templates
 *.komodoproject
 *.sublime-*
 .pydevproject
 .idea/
+<<<<<<< HEAD
 .DS_Store
+=======
+
+.DS_Store
+
+/nbproject/
+>>>>>>> e49c0b4730fea45ee3885b7b7b6cbc894b8de0d4
