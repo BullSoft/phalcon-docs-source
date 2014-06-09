@@ -792,7 +792,7 @@ Sets a transaction related to the Model instance
 
 
 
-protected :doc:`Phalcon\\Mvc\\Model <Phalcon_Mvc_Model>`  **setSource** ()
+protected :doc:`Phalcon\\Mvc\\Model <Phalcon_Mvc_Model>`  **setSource** (*string* $source)
 
 Sets table name which model should be mapped
 
@@ -804,7 +804,7 @@ Returns table name mapped in the model
 
 
 
-protected :doc:`Phalcon\\Mvc\\Model <Phalcon_Mvc_Model>`  **setSchema** ()
+protected :doc:`Phalcon\\Mvc\\Model <Phalcon_Mvc_Model>`  **setSchema** (*string* $schema)
 
 Sets schema name where table mapped is located
 
@@ -1137,7 +1137,7 @@ Appends a customized message on the validation process
 
 
 
-protected :doc:`Phalcon\\Mvc\\Model <Phalcon_Mvc_Model>`  **validate** ()
+protected :doc:`Phalcon\\Mvc\\Model <Phalcon_Mvc_Model>`  **validate** (:doc:`Phalcon\\Mvc\\Model\\ValidatorInterface <Phalcon_Mvc_Model_ValidatorInterface>` $validator)
 
 Executes validators on every validation call 
 
@@ -1400,7 +1400,7 @@ Writes an attribute value by its name
 
 
 
-protected  **skipAttributes** ()
+protected  **skipAttributes** (*array* $attributes, [*boolean* $replace])
 
 Sets a list of attributes that must be skipped from the generated INSERT/UPDATE statement 
 
@@ -1421,7 +1421,7 @@ Sets a list of attributes that must be skipped from the generated INSERT/UPDATE 
 
 
 
-protected  **skipAttributesOnCreate** ()
+protected  **skipAttributesOnCreate** (*array* $attributes, [*boolean* $replace])
 
 Sets a list of attributes that must be skipped from the generated INSERT statement 
 
@@ -1442,7 +1442,7 @@ Sets a list of attributes that must be skipped from the generated INSERT stateme
 
 
 
-protected  **skipAttributesOnUpdate** ()
+protected  **skipAttributesOnUpdate** (*array* $attributes, [*boolean* $replace])
 
 Sets a list of attributes that must be skipped from the generated UPDATE statement 
 
@@ -1463,7 +1463,7 @@ Sets a list of attributes that must be skipped from the generated UPDATE stateme
 
 
 
-public :doc:`Phalcon\\Mvc\\Model\\Relation <Phalcon_Mvc_Model_Relation>`  **hasOne** ()
+public :doc:`Phalcon\\Mvc\\Model\\Relation <Phalcon_Mvc_Model_Relation>`  **hasOne** (*mixed* $fields, *string* $referenceModel, *mixed* $referencedFields, [*array* $options])
 
 Setup a 1-1 relation between two models 
 
@@ -1484,7 +1484,7 @@ Setup a 1-1 relation between two models
 
 
 
-public :doc:`Phalcon\\Mvc\\Model\\Relation <Phalcon_Mvc_Model_Relation>`  **belongsTo** ()
+public :doc:`Phalcon\\Mvc\\Model\\Relation <Phalcon_Mvc_Model_Relation>`  **belongsTo** (*mixed* $fields, *string* $referenceModel, *mixed* $referencedFields, [*array* $options])
 
 Setup a relation reverse 1-1  between two models 
 
@@ -1505,7 +1505,7 @@ Setup a relation reverse 1-1  between two models
 
 
 
-public :doc:`Phalcon\\Mvc\\Model\\Relation <Phalcon_Mvc_Model_Relation>`  **hasMany** ()
+public :doc:`Phalcon\\Mvc\\Model\\Relation <Phalcon_Mvc_Model_Relation>`  **hasMany** (*mixed* $fields, *string* $referenceModel, *mixed* $referencedFields, [*array* $options])
 
 Setup a relation 1-n between two models 
 
@@ -1526,7 +1526,7 @@ Setup a relation 1-n between two models
 
 
 
-public :doc:`Phalcon\\Mvc\\Model\\Relation <Phalcon_Mvc_Model_Relation>`  **hasManyToMany** ()
+public :doc:`Phalcon\\Mvc\\Model\\Relation <Phalcon_Mvc_Model_Relation>`  **hasManyToMany** (*string* $fields, *string* $intermediateModel, *string* $intermediateFields, *string* $intermediateReferencedFields, *unknown* $referenceModel, *string* $referencedFields, [*array* $options])
 
 Setup a relation n-n between two models through an intermediate relation 
 
@@ -1555,7 +1555,7 @@ Setup a relation n-n between two models through an intermediate relation
 
 
 
-public  **addBehavior** ()
+public  **addBehavior** (:doc:`Phalcon\\Mvc\\Model\\BehaviorInterface <Phalcon_Mvc_Model_BehaviorInterface>` $behavior)
 
 Setups a behavior in a model 
 
@@ -1583,7 +1583,7 @@ Setups a behavior in a model
 
 
 
-protected  **keepSnapshots** ()
+protected  **keepSnapshots** (*boolean* $keepSnapshots)
 
 Sets if the model must keep the original record snapshot in memory 
 
@@ -1634,7 +1634,7 @@ Returns a list of changed values
 
 
 
-protected  **useDynamicUpdate** ()
+protected  **useDynamicUpdate** (*boolean* $dynamicUpdate)
 
 Sets if a model must use dynamic update instead of the all-field update 
 

@@ -273,4 +273,20 @@ public  **getIterator** ()
 ...
 
 
+<<<<<<< HEAD:zh_CN/api/Phalcon_Session.rst
 >>>>>>> e49c0b4730fea45ee3885b7b7b6cbc894b8de0d4:zh/api/Phalcon_Session_Adapter.rst
+=======
+public  **setId** (*unknown* $sid)
+
+Set the current session id 
+
+.. code-block:: php
+
+    <?php
+
+    $session->setId($id);
+
+
+
+
+>>>>>>> 9ec7f512c2b77552538de88ba2270ac026bfcc34:ru/api/Phalcon_Session_Adapter.rst

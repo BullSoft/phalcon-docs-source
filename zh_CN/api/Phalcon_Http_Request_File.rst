@@ -63,6 +63,8 @@ Move the temporary file to a destination
 Class **Phalcon\\Http\\Request\\File**
 ======================================
 
+*extends* SplFileInfo
+
 *implements* :doc:`Phalcon\\Http\\Request\\FileInterface <Phalcon_Http_Request_FileInterface>`
 
 Provides OO wrappers to the $_FILES superglobal  
@@ -157,4 +159,143 @@ public static  **__set_state** (*unknown* $params)
 ...
 
 
+<<<<<<< HEAD:zh_CN/api/Phalcon_Http_Request_File.rst
 >>>>>>> e49c0b4730fea45ee3885b7b7b6cbc894b8de0d4:zh/api/Phalcon_Http_Request_File.rst
+=======
+public *string*  **getExtension** ()
+
+Returns the file extension
+
+
+
+public  **getPath** () inherited from SplFileInfo
+
+...
+
+
+public  **getFilename** () inherited from SplFileInfo
+
+...
+
+
+public  **getBasename** ([*unknown* $suffix]) inherited from SplFileInfo
+
+...
+
+
+public  **getPathname** () inherited from SplFileInfo
+
+...
+
+
+public  **getPerms** () inherited from SplFileInfo
+
+...
+
+
+public  **getInode** () inherited from SplFileInfo
+
+...
+
+
+public  **getOwner** () inherited from SplFileInfo
+
+...
+
+
+public  **getGroup** () inherited from SplFileInfo
+
+...
+
+
+public  **getATime** () inherited from SplFileInfo
+
+...
+
+
+public  **getMTime** () inherited from SplFileInfo
+
+...
+
+
+public  **getCTime** () inherited from SplFileInfo
+
+...
+
+
+public  **isWritable** () inherited from SplFileInfo
+
+...
+
+
+public  **isReadable** () inherited from SplFileInfo
+
+...
+
+
+public  **isExecutable** () inherited from SplFileInfo
+
+...
+
+
+public  **isFile** () inherited from SplFileInfo
+
+...
+
+
+public  **isDir** () inherited from SplFileInfo
+
+...
+
+
+public  **isLink** () inherited from SplFileInfo
+
+...
+
+
+public  **getLinkTarget** () inherited from SplFileInfo
+
+...
+
+
+public  **getRealPath** () inherited from SplFileInfo
+
+...
+
+
+public  **getFileInfo** ([*unknown* $class_name]) inherited from SplFileInfo
+
+...
+
+
+public  **getPathInfo** ([*unknown* $class_name]) inherited from SplFileInfo
+
+...
+
+
+public  **openFile** ([*unknown* $open_mode], [*unknown* $use_include_path], [*unknown* $context]) inherited from SplFileInfo
+
+...
+
+
+public  **setFileClass** ([*unknown* $class_name]) inherited from SplFileInfo
+
+...
+
+
+public  **setInfoClass** ([*unknown* $class_name]) inherited from SplFileInfo
+
+...
+
+
+final public  **_bad_state_ex** () inherited from SplFileInfo
+
+...
+
+
+public  **__toString** () inherited from SplFileInfo
+
+...
+
+
+>>>>>>> 9ec7f512c2b77552538de88ba2270ac026bfcc34:pl/api/Phalcon_Http_Request_File.rst

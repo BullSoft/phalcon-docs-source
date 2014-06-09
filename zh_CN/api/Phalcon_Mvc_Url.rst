@@ -174,7 +174,7 @@ Returns the base path
 
 
 
-public *string*  **get** ([*string|array* $uri], [*unknown* $args])
+public *string*  **get** ([*string|array* $uri], [*unknown* $args], [*bool|null* $local])
 
 Generates a URL 
 
